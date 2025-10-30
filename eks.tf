@@ -23,6 +23,8 @@ resource "aws_eks_cluster" "eks" {
     
   }
 
+  tags = var.tags
+
   depends_on = [ aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy ]
 }
 
@@ -43,6 +45,7 @@ resource "aws_iam_role" "eks-role" {
       },
     ]
   })
+  tags = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
@@ -54,6 +57,7 @@ resource "aws_eks_access_entry" "root-access" {
   cluster_name      = aws_eks_cluster.eks.name
   principal_arn     = data.aws_iam_user.root.arn
   type              = "STANDARD"
+  tags = var.tags
 }
 
 resource "aws_eks_access_policy_association" "admin" {
@@ -74,9 +78,9 @@ resource "aws_eks_access_policy_association" "cluster-admin" {
   access_scope {
     type       = "cluster"
   }
+  
 }
 
-
 data "aws_iam_user" "root" {
-    user_name = "ADMIN"
+    user_name = var.admin_user
 }

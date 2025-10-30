@@ -4,7 +4,7 @@ resource "aws_eks_node_group" "eks_node_group" {
   node_role_arn   = aws_iam_role.eks_node.arn
   subnet_ids      = aws_subnet.eks_subnets[*].id
   
-  instance_types = [ "t3.micro" ]
+  instance_types = [ "t3.small" ]
   disk_size = 20
 
   scaling_config {
@@ -23,6 +23,7 @@ resource "aws_eks_node_group" "eks_node_group" {
     aws_iam_role_policy_attachment.eks_node-AmazonEC2ContainerRegistryReadOnly,
     aws_eks_cluster.eks
   ]
+  tags = var.tags
 }
 
 resource "aws_iam_role" "eks_node" {
@@ -38,6 +39,7 @@ resource "aws_iam_role" "eks_node" {
     }]
     Version = "2012-10-17"
   })
+  tags = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "eks_node-AmazonEKSWorkerNodePolicy" {

@@ -1,13 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-service
+  name: loadbalancer
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
-    app.kubernetes.io/name: myapp
+    tier: frontend
   ports:
     - protocol: TCP
       port: 80
       targetPort: 80
-      nodePort: 30080

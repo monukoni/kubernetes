@@ -1,5 +1,6 @@
 resource "aws_vpc" "eks_vpc" {
   cidr_block       = local.vpc-cidr
+  tags = var.tags
 }
 
 data "aws_availability_zones" "avz" {
@@ -9,9 +10,11 @@ resource "aws_subnet" "eks_subnets" {
   vpc_id = aws_vpc.eks_vpc.id
   availability_zone = data.aws_availability_zones.avz.names[count.index]
   cidr_block = local.avz-cidrs[count.index]
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = true 
 
   count = length(data.aws_availability_zones.avz.names)
+
+  tags = var.tags
 }
 
 data "aws_route_table" "rt" {
@@ -26,4 +29,5 @@ resource "aws_route" "r" {
 
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.eks_vpc.id
+  tags = var.tags
 }
