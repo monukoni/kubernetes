@@ -2,6 +2,10 @@ variable "region" {
     default = "eu-central-1"
 }
 
+variable "aws_account_id" {
+  type = string
+}
+
 locals {
   avz-cidrs = formatlist("10.0.%v.0/24", range(1, length(data.aws_availability_zones.avz.names) + 1))
   vpc-cidr = "10.0.0.0/16"

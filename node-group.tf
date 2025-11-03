@@ -26,6 +26,33 @@ resource "aws_eks_node_group" "eks_node_group" {
   tags = var.tags
 }
 
+resource "aws_iam_role" "oidc" {
+  name = "oidc"
+  assume_role_policy = templatefile("oidc-role.json", { 
+    "oidc_arn": aws_iam_openid_connect_provider.eks.arn,
+    "oidc_url": aws_iam_openid_connect_provider.eks.url })
+  tags = var.tags
+}
+
+
+
+resource "aws_iam_role" "eks_node_autoscailing" {
+  name = "eks_node_autoscailing"
+  assume_role_policy = templatefile("autoscailing-role.json", { 
+    "oidc_arn": aws_iam_openid_connect_provider.eks.arn,
+    "oidc_url": aws_iam_openid_connect_provider.eks.url })
+  tags = var.tags
+}
+
+resource "aws_iam_role_policy" "eks_node_autoscailing" {
+  role = aws_iam_role.eks_node_autoscailing.id
+  policy = templatefile("autoscailing-role-policy.json", {
+    "aws_region": var.region,
+    "aws_account_id": var.aws_account_id,
+    "asg_name": aws_eks_node_group.eks_node_group.resources[0].autoscaling_groups[0].name })
+}
+
+
 resource "aws_iam_role" "eks_node" {
   name = "eks-node-group-role"
 
@@ -56,3 +83,4 @@ resource "aws_iam_role_policy_attachment" "eks_node-AmazonEC2ContainerRegistryRe
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   role       = aws_iam_role.eks_node.name
 }
+

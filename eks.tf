@@ -1,6 +1,6 @@
 resource "aws_eks_cluster" "eks" {
   name = "eks"
-  role_arn = aws_iam_role.eks-role.arn
+  role_arn = aws_iam_role.eks_role.arn
 
   upgrade_policy {
     support_type = "STANDARD"
@@ -28,8 +28,8 @@ resource "aws_eks_cluster" "eks" {
   depends_on = [ aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy ]
 }
 
-resource "aws_iam_role" "eks-role" {
-  name = "eks-cluster-role"
+resource "aws_iam_role" "eks_role" {
+  name = "eks_cluster_role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -50,10 +50,17 @@ resource "aws_iam_role" "eks-role" {
 
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = aws_iam_role.eks-role.name
+  role       = aws_iam_role.eks_role.name
 }
 
-resource "aws_eks_access_entry" "root-access" {
+resource "aws_iam_openid_connect_provider" "eks" {
+  url             = aws_eks_cluster.eks.identity[0].oidc[0].issuer
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da0afd10df6"] 
+}
+
+
+resource "aws_eks_access_entry" "root_access" {
   cluster_name      = aws_eks_cluster.eks.name
   principal_arn     = data.aws_iam_user.root.arn
   type              = "STANDARD"
@@ -70,7 +77,7 @@ resource "aws_eks_access_policy_association" "admin" {
   }
 }
 
-resource "aws_eks_access_policy_association" "cluster-admin" {
+resource "aws_eks_access_policy_association" "cluster_admin" {
   cluster_name  = aws_eks_cluster.eks.name
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
   principal_arn = data.aws_iam_user.root.arn
