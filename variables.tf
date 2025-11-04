@@ -1,25 +1,25 @@
 variable "region" {
-    default = "eu-central-1"
+  default = "eu-central-1"
 }
 
 variable "aws_account_id" {
   type = string
 }
 
-locals {
-  avz-cidrs = formatlist("10.0.%v.0/24", range(1, length(data.aws_availability_zones.avz.names) + 1))
-  vpc-cidr = "10.0.0.0/16"
+variable "vpc_cidr" {
+  type    = string
+  default = "10.0.0.0/16"
 }
 
 variable "tags" {
   type = map(string)
   default = {
-    "clusterName": "eks",
-    "version": "v1"
+    "clusterName" : "eks",
+    "version" : "v1"
   }
 }
 
 variable "admin_user" {
-  type = string
+  type    = string
   default = "ADMIN"
 }

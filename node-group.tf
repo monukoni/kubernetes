@@ -2,10 +2,10 @@ resource "aws_eks_node_group" "eks_node_group" {
   cluster_name    = aws_eks_cluster.eks.name
   node_group_name = "eks_node_group"
   node_role_arn   = aws_iam_role.eks_node.arn
-  subnet_ids      = aws_subnet.eks_subnets[*].id
-  
-  instance_types = [ "t3.small" ]
-  disk_size = 20
+  subnet_ids      = module.networking.eks_subnets[*].id
+
+  instance_types = ["t3.small"]
+  disk_size      = 20
 
   scaling_config {
     desired_size = 1
@@ -28,9 +28,9 @@ resource "aws_eks_node_group" "eks_node_group" {
 
 resource "aws_iam_role" "oidc" {
   name = "oidc"
-  assume_role_policy = templatefile("oidc-role.json", { 
-    "oidc_arn": aws_iam_openid_connect_provider.eks.arn,
-    "oidc_url": aws_iam_openid_connect_provider.eks.url })
+  assume_role_policy = templatefile("oidc-role.json", {
+    "oidc_arn" : aws_iam_openid_connect_provider.eks.arn,
+  "oidc_url" : aws_iam_openid_connect_provider.eks.url })
   tags = var.tags
 }
 
@@ -38,18 +38,18 @@ resource "aws_iam_role" "oidc" {
 
 resource "aws_iam_role" "eks_node_autoscailing" {
   name = "eks_node_autoscailing"
-  assume_role_policy = templatefile("autoscailing-role.json", { 
-    "oidc_arn": aws_iam_openid_connect_provider.eks.arn,
-    "oidc_url": aws_iam_openid_connect_provider.eks.url })
+  assume_role_policy = templatefile("autoscailing-role.json", {
+    "oidc_arn" : aws_iam_openid_connect_provider.eks.arn,
+  "oidc_url" : aws_iam_openid_connect_provider.eks.url })
   tags = var.tags
 }
 
 resource "aws_iam_role_policy" "eks_node_autoscailing" {
   role = aws_iam_role.eks_node_autoscailing.id
   policy = templatefile("autoscailing-role-policy.json", {
-    "aws_region": var.region,
-    "aws_account_id": var.aws_account_id,
-    "asg_name": aws_eks_node_group.eks_node_group.resources[0].autoscaling_groups[0].name })
+    "aws_region" : var.region,
+    "aws_account_id" : var.aws_account_id,
+  "asg_name" : aws_eks_node_group.eks_node_group.resources[0].autoscaling_groups[0].name })
 }
 
 
