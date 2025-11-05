@@ -30,3 +30,11 @@ variable "cluster_name" {
 variable "eks_subnets" {
   
 }
+
+variable "autoscailing_role_policy_path" {
+  type = string
+}
+
+variable "autoscailing_role_path" {
+  type = string
+}

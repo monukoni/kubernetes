@@ -14,3 +14,7 @@ variable "eks_role_arn" {
 variable "subnets" {
   
 }
+
+variable "oidc_role_path" {
+  
+}

@@ -63,7 +63,7 @@ resource "aws_iam_openid_connect_provider" "eks" {
 
 resource "aws_iam_role" "oidc" {
   name = "oidc"
-  assume_role_policy = templatefile("oidc-role.json", {
+  assume_role_policy = templatefile(var.oidc_role_path, {
     "oidc_arn" : aws_iam_openid_connect_provider.eks.arn,
   "oidc_url" : aws_iam_openid_connect_provider.eks.url })
   tags = var.tags

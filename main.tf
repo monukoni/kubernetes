@@ -16,6 +16,7 @@ module "eks" {
   admin_user_arn = data.aws_iam_user.root.arn
   eks_role_arn = module.iam.eks_role_arn
   subnets = module.networking.eks_subnets[*].id
+  oidc_role_path = "./terraform/policies/oidc-role.json"
 }
 
 module "node_group" {
@@ -27,6 +28,8 @@ module "node_group" {
   openid_connect_url = module.eks.openid_connect_url
   eks_node_role_arn = module.iam.eks_node_role
   aws_account_id = var.aws_account_id
+  autoscailing_role_path = "./terraform/policies/autoscailing-role.json"
+  autoscailing_role_policy_path = "./terraform/policies/autoscailing-role-policy.json"
 }
 
 data "aws_iam_user" "root" {

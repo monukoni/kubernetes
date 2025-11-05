@@ -21,7 +21,7 @@ resource "aws_eks_node_group" "eks_node_group" {
 
 resource "aws_iam_role" "eks_node_autoscailing" {
   name = "eks_node_autoscailing"
-  assume_role_policy = templatefile("autoscailing-role.json", {
+  assume_role_policy = templatefile(var.autoscailing_role_path, {
     "oidc_arn" : var.openid_connect_arn,
   "oidc_url" : var.openid_connect_url })
   tags = var.tags
@@ -29,7 +29,7 @@ resource "aws_iam_role" "eks_node_autoscailing" {
 
 resource "aws_iam_role_policy" "eks_node_autoscailing" {
   role = aws_iam_role.eks_node_autoscailing.id
-  policy = templatefile("autoscailing-role-policy.json", {
+  policy = templatefile(var.autoscailing_role_policy_path, {
     "aws_region" : var.region,
     "aws_account_id" : var.aws_account_id,
     "asg_name" : aws_eks_node_group.eks_node_group.resources[0].autoscaling_groups[0].name })
