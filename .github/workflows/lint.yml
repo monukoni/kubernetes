@@ -75,3 +75,8 @@ jobs:
         uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
         with:
           github_token: ${{ github.token }}
+      - name: Archive results
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfsec-report
+          path: results.json
