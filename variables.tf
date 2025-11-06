@@ -20,7 +20,3 @@ variable "admin_user" {
   type    = string
   default = "ADMIN"
 }
-
-variable "bucket_name" {
-  default = "terraform-project-state-bucket312"
-}
