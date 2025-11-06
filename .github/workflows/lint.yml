@@ -1,0 +1,22 @@
+name: linting
+run-name: ${{ github.actor }} runned
+on: 
+    push:
+    workflow_dispatch:
+    pull_request:
+    
+jobs:
+  checkov:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install tools
+        run: |
+         pip install checkov
+         sudo apt-get install terraform
+      - name: run validation
+        run: |
+          terraform init
+          terraform plan -out tf.plan
+          terraform show -json tf.plan  > tf.json 
+          checkov -f tf.json
