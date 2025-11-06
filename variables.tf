@@ -22,5 +22,5 @@ variable "admin_user" {
 }
 
 variable "bucket_name" {
-  default = "${state_bucket_name}"
+  default = "terraform-project-state-bucket312"
 }
