@@ -23,3 +23,7 @@ variable "admin_user" {
   type    = string
   default = "ADMIN"
 }
+
+variable "bucket_name" {
+  default = "${state_bucket_name}"
+}
