@@ -7,7 +7,7 @@ module "networking" {
 module "iam" {
   source   = "./terraform/iam"
   tags     = var.tags
-  aws_account_id = var.aws_account_id
+  aws_account_id = data.aws_caller_identity.current.account_id
   region = var.region
 }
 
@@ -27,7 +27,7 @@ module "node_group" {
   openid_connect_arn = module.eks.openid_connect_arn
   openid_connect_url = module.eks.openid_connect_url
   eks_node_role_arn = module.iam.eks_node_role
-  aws_account_id = var.aws_account_id
+  aws_account_id = data.aws_caller_identity.current.account_id
   autoscailing_role_path = "./terraform/policies/autoscailing-role.json"
   autoscailing_role_policy_path = "./terraform/policies/autoscailing-role-policy.json"
 }
@@ -35,3 +35,5 @@ module "node_group" {
 data "aws_iam_user" "root" {
   user_name = var.admin_user
 }
+
+data "aws_caller_identity" "current" {}
