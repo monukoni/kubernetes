@@ -8,30 +8,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+
+      - name: Cache checkov
+        uses: actions/cache@v4
+        with:
+          path: ~/.checkov_cache
+          key: ${{ runner.os }}-checkov-cache
+
       - name: Install tools
         run: |
           pip install checkov
-          sudo apt install jq
-          sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
-          wget -O- https://apt.releases.hashicorp.com/gpg | \
-           gpg --dearmor | \
-           sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
-          gpg --no-default-keyring \
-           --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
-           --fingerprint
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-          sudo apt update
-          sudo apt-get install terraform
+          
       - name: run validation
         run: |
           export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           export AWS_REGION=${{ vars.AWS_REGION }}
+          export CHECKOV_ENABLE_SECRETS_SCAN=False
+          export CHECKOV_ENABLE_GRAPH_FRAMEWORK=True
+          export CHECKOV_CACHE_PATH=~/.checkov_cache
 
-          terraform init
-          terraform plan -out tf.plan
-          terraform show -json tf.plan | jq '.' > tf.json
-          checkov -f tf.json
+
+          checkov -d .
   
 
   tflint:
@@ -60,7 +58,6 @@ jobs:
   
   tfsec:
     name: tfsec PR commenter
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     permissions:
