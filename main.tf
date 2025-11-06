@@ -7,7 +7,7 @@ module "networking" {
 module "iam" {
   source   = "./terraform/iam"
   tags     = var.tags
-  aws_account_id = var.aws_account_id
+  aws_account_id = data.aws_caller_identity.current.account_id
   region = var.region
 }
 
