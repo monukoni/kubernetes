@@ -13,6 +13,7 @@ jobs:
       - name: Install tools
         run: |
           pip install checkov
+          apt install jq
           sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
           wget -O- https://apt.releases.hashicorp.com/gpg | \
            gpg --dearmor | \
@@ -31,5 +32,6 @@ jobs:
 
           terraform init
           terraform plan -out tf.plan
-          terraform show -json tf.plan  > tf.json 
+          terraform show -json tf.plan | jq '.' > tf.json
           checkov -f tf.json
+          
