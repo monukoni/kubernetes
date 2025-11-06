@@ -9,14 +9,15 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Cache checkov
-        if: always()
-        uses: actions/cache/save@v4
+      
+      - uses: actions/cache/restore@v4
+        id: cache
         with:
           path: ~/.checkov_cache
           key: ${{ runner.os }}-checkov-cache
+      
 
-
+      
       - name: Install tools
         run: |
           pip install checkov
@@ -32,6 +33,12 @@ jobs:
 
 
           checkov -d .
+      - name: Cache checkov
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.checkov_cache
+          key: ${{ runner.os }}-checkov-cache
   
 
   tflint:
