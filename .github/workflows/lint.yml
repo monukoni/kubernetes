@@ -2,6 +2,7 @@ name: lint
 run-name: ${{ github.actor }} runned
 on: 
     workflow_call:
+    workflow_dispatch:
     
 jobs:
   checkov:
