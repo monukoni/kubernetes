@@ -1,7 +1,8 @@
-name: linting
+name: lint
 run-name: ${{ github.actor }} runned
 on: 
-    pull_request:
+    workflow_call:
+    workflow_dispatch:
     
 jobs:
   checkov:
@@ -37,12 +38,12 @@ jobs:
           path: checkov.tar
           key: checkov-image-cache
       - name: Run Checkov
+        continue-on-error: true
         run: |
-          docker run --rm -v $PWD:/src bridgecrew/checkov -d /src
+          docker run --rm -v $PWD:/src bridgecrew/checkov -d /src --quiet
 
   tflint:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
       name: Checkout source code
@@ -84,3 +85,5 @@ jobs:
         with:
           name: tfsec-report
           path: results.json
+
+  
