@@ -10,11 +10,11 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Restore cached image tar (if exists)
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: checkov.tar
           key: checkov-image-cache-${{ github.sha }}
-          save-always: true
+
 
       - name: Load image if cached
         if: steps.cache.outputs.cache-hit == 'true'
@@ -30,7 +30,12 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           docker image save bridgecrew/checkov:latest --output checkov.tar
-
+      
+      - name: Save cache
+        uses: actions/cache/save@v4
+        with:
+          path: checkov.tar
+          key: checkov-image-cache-${{ github.sha }}
       - name: Run Checkov
         run: |
           docker run --rm -v $PWD:/src bridgecrew/checkov -d /src
