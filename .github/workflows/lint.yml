@@ -40,8 +40,6 @@ jobs:
         run: |
           docker run --rm -v $PWD:/src bridgecrew/checkov -d /src
 
-  
-
   tflint:
     runs-on: ubuntu-latest
 
