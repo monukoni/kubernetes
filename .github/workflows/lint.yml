@@ -15,8 +15,7 @@ jobs:
         with:
           path: ./pip_cache
           key: ${{ runner.os }}-checkov-cache
-      
-
+    
       
       - name: Install tools
         run: |
