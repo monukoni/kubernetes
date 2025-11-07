@@ -15,13 +15,13 @@ jobs:
     approve: 
         runs-on: ubuntu-latest
         needs: ["lint"]
+        timeout-minutes: 3
         permissions:
             issues: write
         steps:
             - uses: trstringer/manual-approval@v1
               with:
                 approvers: monukoni
-                timeout-minutes: 3
                 secret: ${{ github.TOKEN }}
                 minimum-approvals: 1
                 exclude-workflow-initiator-as-approver: false
