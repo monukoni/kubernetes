@@ -9,37 +9,31 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      
-      # - uses: actions/cache/restore@v4
-      #   id: cache
-      #   with:
-      #     path: ./pip_cache
-      #     key: ${{ runner.os }}-checkov-cache
-    
-      
-      # - name: Install tools
-      #   run: |
-      #     export PIP_CACHE_DIR=./pip_cache
-      #     pip install checkov
-  
-      - name: run validation
+      - name: Restore cached image tar (if exists)
+        uses: actions/cache@v4
+        with:
+          path: docker_image_cache/checkov.tar
+          key: checkov-image-cache-${{ github.sha }}
+
+      - name: Load image if cached
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: |
+          docker image load --input docker_image_cache/checkov.tar
+
+      - name: Pull image if not cached
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          docker pull bridgecrew/checkov:latest
+
+      - name: Save image for next run
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          docker image save bridgecrew/checkov:latest --output docker_image_cache/checkov.tar
+
+      - name: Run Checkov
         run: |
           docker run --rm -v $PWD:/src bridgecrew/checkov -d /src
 
-        # export CHECKOV_ENABLE_SECRETS_SCAN=False
-        # export CHECKOV_ENABLE_GRAPH_FRAMEWORK=True
-        # checkov -d .
-
-      # - name: test
-      #   if: always()
-      #   run: |
-      #     ls -la 
-      # - name: Cache checkov
-      #   if: always()
-      #   uses: actions/cache/save@v4
-      #   with:
-      #     path: ./pip_cache
-      #     key: ${{ runner.os }}-checkov-cache
   
 
   tflint:
