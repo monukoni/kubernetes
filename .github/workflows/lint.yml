@@ -31,7 +31,7 @@ jobs:
         run: |
           docker image save bridgecrew/checkov:latest --output checkov.tar
       
-      - name: Save cache
+      - name: Save cached image tar
         uses: actions/cache/save@v4
         with:
           path: checkov.tar
