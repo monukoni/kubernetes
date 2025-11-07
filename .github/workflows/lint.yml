@@ -15,7 +15,6 @@ jobs:
           path: checkov.tar
           key: checkov-image-cache
 
-
       - name: Load image if cached
         if: steps.cache.outputs.cache-hit == 'true'
         run: |
