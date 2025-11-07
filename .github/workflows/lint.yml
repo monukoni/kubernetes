@@ -10,35 +10,36 @@ jobs:
       - uses: actions/checkout@v5
 
       
-      - uses: actions/cache/restore@v4
-        id: cache
-        with:
-          path: ./pip_cache
-          key: ${{ runner.os }}-checkov-cache
+      # - uses: actions/cache/restore@v4
+      #   id: cache
+      #   with:
+      #     path: ./pip_cache
+      #     key: ${{ runner.os }}-checkov-cache
     
       
-      - name: Install tools
-        run: |
-          export PIP_CACHE_DIR=./pip_cache
-          pip install checkov
+      # - name: Install tools
+      #   run: |
+      #     export PIP_CACHE_DIR=./pip_cache
+      #     pip install checkov
   
       - name: run validation
         run: |
-          export CHECKOV_ENABLE_SECRETS_SCAN=False
-          export CHECKOV_ENABLE_GRAPH_FRAMEWORK=True
+          docker run --rm -v $PWD:/src bridgecrew/checkov -d /src
 
-          checkov -d .
+        # export CHECKOV_ENABLE_SECRETS_SCAN=False
+        # export CHECKOV_ENABLE_GRAPH_FRAMEWORK=True
+        # checkov -d .
 
-      - name: test
-        if: always()
-        run: |
-          ls -la 
-      - name: Cache checkov
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: ./pip_cache
-          key: ${{ runner.os }}-checkov-cache
+      # - name: test
+      #   if: always()
+      #   run: |
+      #     ls -la 
+      # - name: Cache checkov
+      #   if: always()
+      #   uses: actions/cache/save@v4
+      #   with:
+      #     path: ./pip_cache
+      #     key: ${{ runner.os }}-checkov-cache
   
 
   tflint:
