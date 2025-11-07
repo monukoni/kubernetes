@@ -11,6 +11,7 @@ jobs:
 
       - name: Restore cached image tar (if exists)
         uses: actions/cache/restore@v4
+        id: cache
         with:
           path: checkov.tar
           key: checkov-image-cache
