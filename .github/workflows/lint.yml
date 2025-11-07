@@ -85,3 +85,7 @@ jobs:
         with:
           name: tfsec-report
           path: results.json
+
+  deploy:
+    needs: [checkov, tflint, tfsec]
+    uses: ./.github/workflows/deploy.yml
