@@ -1,0 +1,11 @@
+name: ci-cd
+
+on: 
+    pull_request:
+    
+jobs:
+    lint:
+        uses: ./.github/workflows/lint.yml
+    deploy:
+        needs: [lint]
+        uses: ./.github/workflows/deploy.yml

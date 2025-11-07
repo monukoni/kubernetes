@@ -1,7 +1,7 @@
 name: lint
 run-name: ${{ github.actor }} runned
 on: 
-    pull_request:
+    workflow_call:
     
 jobs:
   checkov:
@@ -86,6 +86,4 @@ jobs:
           name: tfsec-report
           path: results.json
 
-  deploy:
-    needs: [checkov, tflint, tfsec]
-    uses: ./.github/workflows/deploy.yml
+  
