@@ -12,6 +12,9 @@ jobs:
 
     approve: 
         runs-on: ubuntu-latest
+        needs: ["lint"]
+        permissions:
+            issues: write
         steps:
             - uses: trstringer/manual-approval@v1
               with:
@@ -22,5 +25,5 @@ jobs:
                 fail-on-denial: true
             
     deploy:
-        needs: [lint]
+        needs: [approve]
         uses: ./.github/workflows/deploy.yml
