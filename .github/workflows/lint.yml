@@ -33,6 +33,11 @@ jobs:
 
 
           checkov -d .
+
+      - name: test
+        if: always()
+        run: |
+          ls -la 
       - name: Cache checkov
         if: always()
         uses: actions/cache/save@v4
