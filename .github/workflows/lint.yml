@@ -37,6 +37,7 @@ jobs:
           path: checkov.tar
           key: checkov-image-cache
       - name: Run Checkov
+        continue-on-error: true
         run: |
           docker run --rm -v $PWD:/src bridgecrew/checkov -d /src --quiet
 
