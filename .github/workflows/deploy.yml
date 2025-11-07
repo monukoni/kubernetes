@@ -1,0 +1,31 @@
+name: terraform-test-deploy
+
+on:
+  workflow_run:
+    workflows: ["lint"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v3
+      - name: test
+        run: aws --version
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+
+      - name: Run smoke tests
+        run: ./tests/run.sh
+
+      - name: Terraform Destroy (always)
+        if: always()
+        run: terraform destroy -auto-approve
