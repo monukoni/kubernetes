@@ -15,6 +15,7 @@ jobs:
         steps:
             - uses: trstringer/manual-approval@v1
               with:
+                approvers: monukoni
                 secret: ${{ github.TOKEN }}
                 minimum-approvals: 1
                 exclude-workflow-initiator-as-approver: false
