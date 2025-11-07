@@ -38,7 +38,7 @@ jobs:
           key: checkov-image-cache
       - name: Run Checkov
         run: |
-          docker run --rm -v $PWD:/src bridgecrew/checkov -d /src
+          docker run --rm -v $PWD:/src bridgecrew/checkov -d /src --quiet
 
   tflint:
     runs-on: ubuntu-latest
