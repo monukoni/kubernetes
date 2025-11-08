@@ -3,8 +3,7 @@ run-name: ${{ github.actor }} runned
 on: 
     workflow_call:
     workflow_dispatch:
-permissions:
-    contents: write 
+
 jobs:
   checkov:
     runs-on: ubuntu-latest
