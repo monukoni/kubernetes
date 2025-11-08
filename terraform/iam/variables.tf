@@ -1,5 +1,5 @@
 variable "region" {
-  type = string
+  type    = string
   default = "eu-central-1"
 }
 
@@ -8,6 +8,6 @@ variable "aws_account_id" {
 }
 
 variable "tags" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
