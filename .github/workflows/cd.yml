@@ -1,21 +1,24 @@
-name: terraform-test-deploy
+name: cd
 
-on:
+on: 
   workflow_call:
+        secrets:
+            AWS_ACCESS_KEY_ID:
+                required: true
+            AWS_SECRET_ACCESS_KEY:
+                required: true
   workflow_dispatch:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Terraform deploy
+        name: Terraform deploy
         uses: ./.github/workflows/terraform-deploy.yml
         with: 
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Terraform Destroy (always)
+  destroy:
+        name: Terraform Destroy (always)
         if: always()
         uses: ./.github/workflows/terraform-destroy.yml
         with: 
