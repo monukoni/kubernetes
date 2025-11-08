@@ -1,10 +1,10 @@
 variable "tags" {
-    type = map(string)
-    default = {}
+  type    = map(string)
+  default = {}
 }
 
 variable "region" {
-  type =  string
+  type = string
 }
 
 variable "aws_account_id" {
@@ -20,7 +20,7 @@ variable "openid_connect_url" {
 }
 
 variable "eks_node_role_arn" {
-  
+
 }
 
 variable "cluster_name" {
@@ -28,7 +28,7 @@ variable "cluster_name" {
 }
 
 variable "eks_subnets" {
-  
+
 }
 
 variable "autoscailing_role_policy_path" {

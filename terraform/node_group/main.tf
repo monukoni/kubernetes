@@ -32,6 +32,6 @@ resource "aws_iam_role_policy" "eks_node_autoscailing" {
   policy = templatefile(var.autoscailing_role_policy_path, {
     "aws_region" : var.region,
     "aws_account_id" : var.aws_account_id,
-    "asg_name" : aws_eks_node_group.eks_node_group.resources[0].autoscaling_groups[0].name })
+  "asg_name" : aws_eks_node_group.eks_node_group.resources[0].autoscaling_groups[0].name })
 }
 

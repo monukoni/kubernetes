@@ -1,6 +1,6 @@
 variable "tags" {
-    type = map(string)
-    default = {}
+  type    = map(string)
+  default = {}
 }
 
 variable "admin_user_arn" {
@@ -12,9 +12,9 @@ variable "eks_role_arn" {
 }
 
 variable "subnets" {
-  
+
 }
 
 variable "oidc_role_path" {
-  
+
 }

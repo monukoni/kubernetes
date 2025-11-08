@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "state_bucket" {
-  bucket = var.bucket_name
+  bucket              = var.bucket_name
   object_lock_enabled = true
 }
 

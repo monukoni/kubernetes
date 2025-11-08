@@ -9,7 +9,7 @@ jobs:
     lint:
         uses: ./.github/workflows/lint.yml
         permissions:
-            contents: read
+            contents: write
             pull-requests: write
 
     approve: 
@@ -29,4 +29,7 @@ jobs:
             
     deploy:
         needs: [approve]
-        uses: ./.github/workflows/deploy.yml
+        uses: ./.github/workflows/cd.yml
+        secrets:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

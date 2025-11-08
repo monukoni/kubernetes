@@ -3,7 +3,6 @@ run-name: ${{ github.actor }} runned
 on: 
     workflow_call:
     workflow_dispatch:
-    
 jobs:
   checkov:
     runs-on: ubuntu-latest
@@ -85,5 +84,20 @@ jobs:
         with:
           name: tfsec-report
           path: results.json
+
+  terraform-fmt:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: hashicorp/setup-terraform@v3
+            - name: Terraform fmt
+              run: terraform fmt -recursive
+            
+            - name: Auto Commit Changes
+              uses: stefanzweifel/git-auto-commit-action@v7
+              with:
+                commit_message: "Terraform fmt"
+                file_pattern: "*.tf"
+                commit_user_name: "github-actions[bot]"
 
   
