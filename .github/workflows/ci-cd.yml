@@ -9,7 +9,7 @@ jobs:
     lint:
         uses: ./.github/workflows/lint.yml
         permissions:
-            contents: read
+            contents: write
             pull-requests: write
 
     approve: 
