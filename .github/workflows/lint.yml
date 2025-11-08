@@ -86,4 +86,12 @@ jobs:
           name: tfsec-report
           path: results.json
 
+  terraform-fmt:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: hashicorp/setup-terraform@v3
+            - name: Terraform fmt
+              run: terraform fmt -recursive
+
   
