@@ -13,7 +13,7 @@ jobs:
   deploy:
         name: Terraform deploy
         uses: ./.github/workflows/terraform-deploy.yml
-        with: 
+        secrets: 
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -21,6 +21,6 @@ jobs:
         name: Terraform Destroy (always)
         if: always()
         uses: ./.github/workflows/terraform-destroy.yml
-        with: 
+        secrets: 
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
