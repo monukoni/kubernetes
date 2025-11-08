@@ -6,29 +6,29 @@ on:
     pull_request:
     
 jobs:
-    # lint:
-    #     uses: ./.github/workflows/lint.yml
-    #     permissions:
-    #         contents: read
-    #         pull-requests: write
+    lint:
+        uses: ./.github/workflows/lint.yml
+        permissions:
+            contents: read
+            pull-requests: write
 
-    # approve: 
-    #     runs-on: ubuntu-latest
-    #     needs: ["lint"]
-    #     timeout-minutes: 3
-    #     permissions:
-    #         issues: write
-    #     steps:
-    #         - uses: trstringer/manual-approval@v1
-    #           with:
-    #             approvers: monukoni
-    #             secret: ${{ github.TOKEN }}
-    #             minimum-approvals: 1
-    #             exclude-workflow-initiator-as-approver: false
-    #             fail-on-denial: true
+    approve: 
+        runs-on: ubuntu-latest
+        needs: ["lint"]
+        timeout-minutes: 3
+        permissions:
+            issues: write
+        steps:
+            - uses: trstringer/manual-approval@v1
+              with:
+                approvers: monukoni
+                secret: ${{ github.TOKEN }}
+                minimum-approvals: 1
+                exclude-workflow-initiator-as-approver: false
+                fail-on-denial: true
             
     deploy:
-        # needs: [approve]
+        needs: [approve]
         uses: ./.github/workflows/cd.yml
         secrets:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
