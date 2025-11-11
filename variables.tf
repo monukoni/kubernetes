@@ -20,3 +20,8 @@ variable "admin_user" {
   type    = string
   default = "ADMIN"
 }
+
+variable "name" {
+  type = string
+  default = "eks"
+}

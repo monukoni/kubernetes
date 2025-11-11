@@ -38,3 +38,8 @@ variable "autoscailing_role_policy_path" {
 variable "autoscailing_role_path" {
   type = string
 }
+
+variable "name" {
+  type = string
+  default = "eks"
+}
