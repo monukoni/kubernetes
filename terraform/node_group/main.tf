@@ -1,6 +1,6 @@
 resource "aws_eks_node_group" "eks_node_group" {
   cluster_name    = var.cluster_name
-  node_group_name = "eks_node_group"
+  node_group_name = "${var.name}_node_group"
   node_role_arn   = var.eks_node_role_arn
   subnet_ids      = var.eks_subnets[*].id
 
@@ -20,7 +20,7 @@ resource "aws_eks_node_group" "eks_node_group" {
 }
 
 resource "aws_iam_role" "eks_node_autoscailing" {
-  name = "eks_node_autoscailing"
+  name = "${var.name}_node_autoscailing"
   assume_role_policy = templatefile(var.autoscailing_role_path, {
     "oidc_arn" : var.openid_connect_arn,
   "oidc_url" : var.openid_connect_url })
@@ -28,6 +28,7 @@ resource "aws_iam_role" "eks_node_autoscailing" {
 }
 
 resource "aws_iam_role_policy" "eks_node_autoscailing" {
+  name = "${var.name}_node_autoscailing"
   role = aws_iam_role.eks_node_autoscailing.id
   policy = templatefile(var.autoscailing_role_policy_path, {
     "aws_region" : var.region,

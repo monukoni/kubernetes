@@ -1,5 +1,5 @@
 resource "aws_eks_cluster" "eks" {
-  name     = "eks"
+  name     = var.name
   role_arn = var.eks_role_arn
 
   upgrade_policy {
@@ -7,7 +7,7 @@ resource "aws_eks_cluster" "eks" {
   }
 
   access_config {
-    authentication_mode = "API"
+    authentication_mode = "API_AND_CONFIG_MAP"
   }
 
   kubernetes_network_config {
@@ -62,7 +62,7 @@ resource "aws_iam_openid_connect_provider" "eks" {
 
 
 resource "aws_iam_role" "oidc" {
-  name = "oidc"
+  name = "${var.name}_oidc"
   assume_role_policy = templatefile(var.oidc_role_path, {
     "oidc_arn" : aws_iam_openid_connect_provider.eks.arn,
   "oidc_url" : aws_iam_openid_connect_provider.eks.url })

@@ -18,3 +18,8 @@ variable "subnets" {
 variable "oidc_role_path" {
 
 }
+
+variable "name" {
+  type    = string
+  default = "eks"
+}

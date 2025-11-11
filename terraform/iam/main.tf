@@ -1,5 +1,5 @@
 resource "aws_iam_role" "eks_node_role" {
-  name = "eks-node-group-role"
+  name = "${var.name}_node_group_role"
 
   assume_role_policy = jsonencode({
     Statement = [{
@@ -31,7 +31,7 @@ resource "aws_iam_role_policy_attachment" "eks_node-AmazonEC2ContainerRegistryRe
 
 
 resource "aws_iam_role" "eks_role" {
-  name = "eks_cluster_role"
+  name = "${var.name}_cluster_role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
