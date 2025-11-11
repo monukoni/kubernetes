@@ -23,7 +23,7 @@ resource "aws_iam_role" "eks_node_autoscailing" {
   name = "${var.name}_node_autoscailing"
   assume_role_policy = templatefile(var.autoscailing_role_path, {
     "oidc_arn" : var.openid_connect_arn,
-    "oidc_url" : var.openid_connect_url })
+  "oidc_url" : var.openid_connect_url })
   tags = var.tags
 }
 

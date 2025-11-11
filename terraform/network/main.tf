@@ -1,12 +1,12 @@
 resource "aws_vpc" "eks_vpc" {
-  cidr_block = var.vpc_cidr
+  cidr_block           = var.vpc_cidr
   instance_tenancy     = "default"
   enable_dns_hostnames = true
-  enable_dns_support = true
+  enable_dns_support   = true
 
-  tags       =  merge({
-    "Name": "${var.name}_vpc" },
-     var.tags
+  tags = merge({
+    "Name" : "${var.name}_vpc" },
+    var.tags
   )
 }
 
@@ -17,9 +17,9 @@ resource "aws_subnet" "eks_private_subnets" {
 
   count = length(data.aws_availability_zones.avz.names)
 
-  tags       =  merge({
-    "Name": "${var.name}_private${count.index}_subnet" },
-     var.tags
+  tags = merge({
+    "Name" : "${var.name}_private${count.index}_subnet" },
+    var.tags
   )
 }
 
@@ -30,17 +30,17 @@ resource "aws_subnet" "eks_public_subnets" {
 
   count = length(data.aws_availability_zones.avz.names)
 
-  tags       =  merge({
-    "Name": "${var.name}_public${count.index}_subnet" },
-     var.tags
+  tags = merge({
+    "Name" : "${var.name}_public${count.index}_subnet" },
+    var.tags
   )
 }
 
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.eks_vpc.id
-  tags       =  merge({
-    "Name": "${var.name}_igw" },
-     var.tags
+  tags = merge({
+    "Name" : "${var.name}_igw" },
+    var.tags
   )
 }
 
@@ -57,9 +57,9 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.gw.id
   }
 
-  tags       =  merge({
-    "Name": "${var.name}_rt_public" },
-     var.tags
+  tags = merge({
+    "Name" : "${var.name}_rt_public" },
+    var.tags
   )
 }
 
@@ -71,23 +71,23 @@ resource "aws_route_table_association" "eks_public_subnets" {
 }
 
 resource "aws_eip" "nat" {
-  domain       = "vpc"
-  
-  depends_on = [ aws_internet_gateway.gw ]
+  domain = "vpc"
 
-  tags       =  merge({
-    "Name": "${var.name}_eip_nat" },
-     var.tags
+  depends_on = [aws_internet_gateway.gw]
+
+  tags = merge({
+    "Name" : "${var.name}_eip_nat" },
+    var.tags
   )
 }
 
 resource "aws_nat_gateway" "eks" {
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.eks_public_subnets[0].id
-  depends_on = [ aws_internet_gateway.gw ]
-  tags       =  merge({
-    "Name": "${var.name}_nat" },
-     var.tags
+  depends_on    = [aws_internet_gateway.gw]
+  tags = merge({
+    "Name" : "${var.name}_nat" },
+    var.tags
   )
 }
 
@@ -100,14 +100,14 @@ resource "aws_route_table" "private" {
   }
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.eks.id
   }
   count = length(aws_subnet.eks_private_subnets)
 
-  tags       =  merge({
-    "Name": "${var.name}_rt${count.index}_private" },
-     var.tags
+  tags = merge({
+    "Name" : "${var.name}_rt${count.index}_private" },
+    var.tags
   )
 }
 

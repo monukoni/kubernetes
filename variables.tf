@@ -22,6 +22,6 @@ variable "admin_user" {
 }
 
 variable "name" {
-  type = string
+  type    = string
   default = "eks"
 }

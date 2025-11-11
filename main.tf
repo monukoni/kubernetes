@@ -1,9 +1,9 @@
 module "networking" {
   source   = "./terraform/network"
-  name = var.name
+  name     = var.name
   tags     = var.tags
   vpc_cidr = var.vpc_cidr
-  region = var.region
+  region   = var.region
 }
 
 module "iam" {
@@ -23,7 +23,7 @@ module "eks" {
 
 module "node_group" {
   source                        = "./terraform/node_group"
-  name = var.name
+  name                          = var.name
   region                        = var.region
   cluster_name                  = module.eks.cluster_name
   eks_subnets                   = module.networking.eks_private_subnets

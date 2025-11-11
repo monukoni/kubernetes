@@ -13,6 +13,6 @@ variable "tags" {
 }
 
 variable "name" {
-  type = string
+  type    = string
   default = "eks"
 }

@@ -40,6 +40,6 @@ variable "autoscailing_role_path" {
 }
 
 variable "name" {
-  type = string
+  type    = string
   default = "eks"
 }
