@@ -25,6 +25,7 @@ module "node_group" {
   source                        = "./terraform/node_group"
   name                          = var.name
   region                        = var.region
+  instance_types                = ["c7i-flex.large"]
   cluster_name                  = module.eks.cluster_name
   eks_subnets                   = module.networking.eks_private_subnets
   openid_connect_arn            = module.eks.openid_connect_arn
@@ -33,6 +34,41 @@ module "node_group" {
   aws_account_id                = data.aws_caller_identity.current.account_id
   autoscailing_role_path        = "./terraform/policies/autoscailing-role.json"
   autoscailing_role_policy_path = "./terraform/policies/autoscailing-role-policy.json"
+  ebs_csi_driver_role_path      = "./terraform/policies/ebs_csi_driver_role.json"
+}
+
+resource "kubernetes_storage_class" "gp2_default" {
+  metadata {
+    name = "default"
+    annotations = {
+      "storageclass.kubernetes.io/is-default-class" = "true"
+    }
+  }
+  allow_volume_expansion = "true"
+  volume_binding_mode  = "WaitForFirstConsumer"
+  reclaim_policy       = "Delete"
+  parameters = {
+    type = "gp2"
+    fsType = "ext4"
+  }
+  storage_provisioner = "kubernetes.io/aws-ebs"
+  depends_on = [ module.eks ]
+}
+
+module "consul" {
+  source = "./terraform/consul"
+  consul_variables_path = "./terraform/consul/values.yaml"
+  depends_on = [module.node_group]
+}
+
+resource "aws_ecr_repository" "frontend" {
+  name                 = "frontend"
+  image_tag_mutability = "MUTABLE"
+}
+
+resource "aws_ecr_repository" "backend" {
+  name                 = "backend"
+  image_tag_mutability = "MUTABLE"
 }
 
 data "aws_iam_user" "root" {
@@ -40,3 +76,7 @@ data "aws_iam_user" "root" {
 }
 
 data "aws_caller_identity" "current" {}
+
+data "aws_eks_cluster_auth" "eks" {
+  name = module.eks.cluster_name
+}

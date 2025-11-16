@@ -1,0 +1,4 @@
+backend/go.sum
+backend/go.mod
+test.go
+scrapper.go

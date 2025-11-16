@@ -1,0 +1,44 @@
+global:
+  enabled: true
+  name: consul
+  datacenter: dc1
+  tls:
+    enabled: true
+  acls:
+    manageSystemACLs: true
+
+server:
+  enabled: true
+  replicas: 3
+
+ui:
+  enabled: true
+  service:
+    type: LoadBalancer
+
+connectInject:
+  enabled: true
+  default: false
+  transparentProxy:
+    defaultEnabled: true
+  apiGateway:
+    managedGatewayClass:
+      serviceType: LoadBalancer
+  cni:
+    enabled: true
+  k8sAllowNamespaces:
+    - "*"
+ingressGateways:
+  enabled: true
+  gateways:
+    - name: ingress-gateway
+      service:
+        type: LoadBalancer
+  defaults:
+    service:
+      ports:
+        - port: 80
+          targetPort: 80
+
+client:
+  grpc: true
