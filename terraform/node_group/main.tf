@@ -41,7 +41,7 @@ resource "aws_iam_role" "ebs_csi_driver_role" {
   name = "ebs_csi_driver_role"
   assume_role_policy = templatefile(var.ebs_csi_driver_role_path, {
     "oidc_arn" : var.openid_connect_arn,
-    "oidc_url" : var.openid_connect_url })
+  "oidc_url" : var.openid_connect_url })
 }
 
 resource "aws_iam_role_policy_attachment" "ebs_csi_driver_policy_attachment" {
@@ -50,16 +50,16 @@ resource "aws_iam_role_policy_attachment" "ebs_csi_driver_policy_attachment" {
 }
 
 resource "aws_eks_addon" "ebs-csi-driver" {
-  cluster_name  = var.cluster_name
-  addon_name    = "aws-ebs-csi-driver"
-  addon_version = "v1.52.1-eksbuild.1"
+  cluster_name             = var.cluster_name
+  addon_name               = "aws-ebs-csi-driver"
+  addon_version            = "v1.52.1-eksbuild.1"
   service_account_role_arn = aws_iam_role.ebs_csi_driver_role.arn
-  depends_on = [aws_eks_node_group.eks_node_group]
+  depends_on               = [aws_eks_node_group.eks_node_group]
 }
 
 resource "aws_eks_addon" "coredns" {
-  cluster_name = var.cluster_name
-  addon_name   = "coredns"
+  cluster_name  = var.cluster_name
+  addon_name    = "coredns"
   addon_version = "v1.12.1-eksbuild.2"
-  depends_on = [aws_eks_node_group.eks_node_group]
+  depends_on    = [aws_eks_node_group.eks_node_group]
 }
