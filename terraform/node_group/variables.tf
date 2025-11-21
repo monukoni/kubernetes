@@ -43,3 +43,10 @@ variable "name" {
   type    = string
   default = "eks"
 }
+
+variable "instance_types" {
+  type    = list(string)
+  default = ["t3.small"]
+}
+
+variable "ebs_csi_driver_role_path" {}

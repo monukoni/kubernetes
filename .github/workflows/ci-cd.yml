@@ -1,10 +1,8 @@
 name: ci-cd
 
-on: 
-    push:
-        branches: [main]
+on:
     pull_request:
-    
+
 jobs:
     lint:
         uses: ./.github/workflows/lint.yml
@@ -12,10 +10,57 @@ jobs:
             contents: write
             pull-requests: write
 
+    changes:
+      runs-on: ubuntu-latest
+      outputs:
+        backend: ${{ steps.changes.outputs.backend }}
+        frontend: ${{ steps.changes.outputs.frontend }}
+      steps:
+        - uses: actions/checkout@v4
+        - uses: dorny/paths-filter@v3
+          id: changes
+          with:
+            filters: |
+              backend:
+                - 'src/backend/**'
+                - '.github/workflows/push-docker.yml' 
+              frontend:
+                - 'src/frontend/**'
+                - '.github/workflows/push-docker.yml' 
+
+    backend-push:
+        if: ${{ needs.changes.outputs.backend == 'true' }}
+        uses: ./.github/workflows/push-docker.yml
+        needs: ["lint", "changes"]
+        secrets:
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        with:
+          AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+          AWS_REGION: 'eu-central-1'
+          CONTAINER_NAME: backend
+
+    frontend-push:
+      if: ${{ needs.changes.outputs.frontend == 'true' }}
+      uses: ./.github/workflows/push-docker.yml
+      needs: ["lint", "changes"]
+      secrets:
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      with:
+        AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+        AWS_REGION: 'eu-central-1'
+        CONTAINER_NAME: frontend
+
     approve: 
         runs-on: ubuntu-latest
-        needs: ["lint"]
-        timeout-minutes: 3
+        needs: ["lint", "backend-push", "frontend-push"]
+        if: >-
+          always() && 
+          needs.lint.result == 'success' &&
+          (needs.backend-push.result == 'success' || needs.backend-push.result == 'skipped') &&
+          (needs.frontend-push.result == 'success' || needs.frontend-push.result == 'skipped')
+        timeout-minutes: 1
         permissions:
             issues: write
         steps:

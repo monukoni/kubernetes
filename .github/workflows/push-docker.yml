@@ -1,0 +1,49 @@
+name: push-docker
+on:
+  workflow_call:
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+    inputs:
+      AWS_REGION:
+        required: true
+        type: string
+        default: "eu-central-1"
+      AWS_ACCOUNT_ID:
+        required: true
+        type: string
+      CONTAINER_NAME:
+        required: true
+        type: string
+
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+      - name: Set creds for docker
+        run: |
+          aws ecr get-login-password --region ${{ inputs.AWS_REGION }} | \
+            docker login --username AWS --password-stdin ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com
+      - name: Build and tags image
+        working-directory: "./src/${{ inputs.CONTAINER_NAME }}"
+        run: |
+          docker build -t ${{ inputs.CONTAINER_NAME }} .
+          docker tag ${{ inputs.CONTAINER_NAME }}:latest \
+            ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test
+          docker tag ${{ inputs.CONTAINER_NAME }}:latest \
+            ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test-${{github.run_id}}
+      - name: Push image to registry
+        run: |
+          docker push --all-tags ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}
+          
+
+
