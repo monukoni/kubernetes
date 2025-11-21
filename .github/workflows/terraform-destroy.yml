@@ -19,8 +19,16 @@ jobs:
 
             - uses: hashicorp/setup-terraform@v3
 
-            - name: Terraform Init
-              run: terraform init -input=false
+            - name: Terraform workspace
+              working-directory: ./terraform
+              run: |
+                terraform workspace new cicd-${{ github.sha }}
+                terraform workspace select cicd-${{ github.sha }}
 
-            - name: Terraform Destroy (always)
-              run: terraform destroy -auto-approve -input=false
+            - name: Terraform Init
+              working-directory: ./terraform
+              run: terraform init -var="name=cicd-${{ github.sha }}" -input=false
+
+            - name: Terraform Destroy
+              working-directory: ./terraform
+              run: terraform destroy -var="name=cicd-${{ github.sha }}" -auto-approve -input=false

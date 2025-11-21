@@ -1,5 +1,5 @@
 module "networking" {
-  source   = "./terraform/network"
+  source   = "./modules/network"
   name     = var.name
   tags     = var.tags
   vpc_cidr = var.vpc_cidr
@@ -7,22 +7,22 @@ module "networking" {
 }
 
 module "iam" {
-  source         = "./terraform/iam"
+  source         = "./modules/iam"
   tags           = var.tags
   aws_account_id = data.aws_caller_identity.current.account_id
   region         = var.region
 }
 
 module "eks" {
-  source         = "./terraform/eks"
+  source         = "./modules/eks"
   admin_user_arn = data.aws_iam_user.root.arn
   eks_role_arn   = module.iam.eks_role_arn
   subnets        = module.networking.eks_private_subnets[*].id
-  oidc_role_path = "./terraform/policies/oidc-role.json"
+  oidc_role_path = "./policies/oidc-role.json"
 }
 
 module "node_group" {
-  source                        = "./terraform/node_group"
+  source                        = "./modules/node_group"
   name                          = var.name
   region                        = var.region
   instance_types                = ["c7i-flex.large"]
@@ -32,9 +32,9 @@ module "node_group" {
   openid_connect_url            = module.eks.openid_connect_url
   eks_node_role_arn             = module.iam.eks_node_role
   aws_account_id                = data.aws_caller_identity.current.account_id
-  autoscailing_role_path        = "./terraform/policies/autoscailing-role.json"
-  autoscailing_role_policy_path = "./terraform/policies/autoscailing-role-policy.json"
-  ebs_csi_driver_role_path      = "./terraform/policies/ebs_csi_driver_role.json"
+  autoscailing_role_path        = "./policies/autoscailing-role.json"
+  autoscailing_role_policy_path = "./policies/autoscailing-role-policy.json"
+  ebs_csi_driver_role_path      = "./policies/ebs_csi_driver_role.json"
 }
 
 resource "kubernetes_storage_class" "gp2_default" {
@@ -56,19 +56,28 @@ resource "kubernetes_storage_class" "gp2_default" {
 }
 
 module "consul" {
-  source                = "./terraform/consul"
-  consul_variables_path = "./terraform/consul/values.yaml"
+  source                = "./modules/consul"
+  consul_variables_path = "./modules/consul/values.yaml"
+  name = var.name
   depends_on            = [module.node_group, module.networking, module.iam, module.eks]
 }
 
 resource "aws_ecr_repository" "frontend" {
   name                 = "frontend"
   image_tag_mutability = "MUTABLE"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+  count = terraform.workspace == "default" ? 1 : 0
 }
 
 resource "aws_ecr_repository" "backend" {
   name                 = "backend"
   image_tag_mutability = "MUTABLE"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+  count = terraform.workspace == "default" ? 1 : 0
 }
 
 data "aws_iam_user" "root" {
