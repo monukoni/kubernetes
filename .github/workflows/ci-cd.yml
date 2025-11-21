@@ -28,7 +28,7 @@ jobs:
                 - '.github/workflows/push-docker.yml' 
 
     backend-push:
-        if: steps.changes.outputs.backend == 'true'
+        if: ${{ steps.changes.outputs.backend == 'true' }}
         uses: ./.github/workflows/push-docker.yml
         needs: ["lint", "changes"]
         secrets:
@@ -40,7 +40,7 @@ jobs:
           CONTAINER_NAME: backend
 
     frontend-push:
-      if: steps.changes.outputs.frontend == 'true'
+      if: ${{ steps.changes.outputs.frontend == 'true' }}
       uses: ./.github/workflows/push-docker.yml
       needs: ["lint", "changes"]
       secrets:
