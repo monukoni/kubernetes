@@ -45,20 +45,20 @@ resource "kubernetes_storage_class" "gp2_default" {
     }
   }
   allow_volume_expansion = "true"
-  volume_binding_mode  = "WaitForFirstConsumer"
-  reclaim_policy       = "Delete"
+  volume_binding_mode    = "WaitForFirstConsumer"
+  reclaim_policy         = "Delete"
   parameters = {
-    type = "gp2"
+    type   = "gp2"
     fsType = "ext4"
   }
   storage_provisioner = "kubernetes.io/aws-ebs"
-  depends_on = [ module.eks ]
+  depends_on          = [module.eks]
 }
 
 module "consul" {
-  source = "./terraform/consul"
+  source                = "./terraform/consul"
   consul_variables_path = "./terraform/consul/values.yaml"
-  depends_on = [module.node_group, module.networking, module.iam, module.eks]
+  depends_on            = [module.node_group, module.networking, module.iam, module.eks]
 }
 
 resource "aws_ecr_repository" "frontend" {

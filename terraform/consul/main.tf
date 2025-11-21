@@ -4,10 +4,10 @@ resource "helm_release" "consul" {
   chart      = "consul"
 
   create_namespace = true
-  namespace = "consul"
+  namespace        = "consul"
 
-  wait             = true
-  cleanup_on_fail  = true
+  wait            = true
+  cleanup_on_fail = true
 
-  values = [ file(var.consul_variables_path) ]
+  values = [file(var.consul_variables_path)]
 }
