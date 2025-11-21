@@ -14,6 +14,9 @@ jobs:
 
     changes:
       runs-on: ubuntu-latest
+      outputs:
+        backend: ${{ steps.filter.outputs.backend }}
+        frontend: ${{ steps.filter.outputs.frontend }}
       steps:
         - uses: actions/checkout@v4
         - uses: dorny/paths-filter@v3
@@ -28,7 +31,7 @@ jobs:
                 - '.github/workflows/push-docker.yml' 
 
     backend-push:
-        if: ${{ steps.changes.outputs.backend == 'true' }}
+        if: ${{ needs.changes.outputs.backend == 'true' }}
         uses: ./.github/workflows/push-docker.yml
         needs: ["lint", "changes"]
         secrets:
@@ -40,7 +43,7 @@ jobs:
           CONTAINER_NAME: backend
 
     frontend-push:
-      if: ${{ steps.changes.outputs.frontend == 'true' }}
+      if: ${{ needs.changes.outputs.frontend == 'true' }}
       uses: ./.github/workflows/push-docker.yml
       needs: ["lint", "changes"]
       secrets:
