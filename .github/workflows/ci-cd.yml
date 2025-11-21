@@ -15,8 +15,8 @@ jobs:
     changes:
       runs-on: ubuntu-latest
       outputs:
-        backend: ${{ steps.filter.outputs.backend }}
-        frontend: ${{ steps.filter.outputs.frontend }}
+        backend: ${{ steps.changes.outputs.backend }}
+        frontend: ${{ steps.changes.outputs.frontend }}
       steps:
         - uses: actions/checkout@v4
         - uses: dorny/paths-filter@v3
