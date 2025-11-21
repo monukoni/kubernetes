@@ -37,9 +37,9 @@ jobs:
         working-directory: "./src/${{ inputs.CONTAINER_NAME }}"
         run: |
           docker build -t ${{ inputs.CONTAINER_NAME }} .
-          docker tag ${{ inputs.CONTAINER_NAME }} \
+          docker tag ${{ inputs.CONTAINER_NAME }}:latest \
             ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test
-          docker tag ${{ inputs.CONTAINER_NAME }} \ 
+          docker tag ${{ inputs.CONTAINER_NAME }}:latest \ 
             ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test-${{github.run_id}}
       - name: Push image to registry
         run: |
