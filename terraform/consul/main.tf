@@ -6,5 +6,8 @@ resource "helm_release" "consul" {
   create_namespace = true
   namespace = "consul"
 
+  wait             = true
+  cleanup_on_fail  = true
+
   values = [ file(var.consul_variables_path) ]
 }

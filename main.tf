@@ -58,7 +58,7 @@ resource "kubernetes_storage_class" "gp2_default" {
 module "consul" {
   source = "./terraform/consul"
   consul_variables_path = "./terraform/consul/values.yaml"
-  depends_on = [module.node_group]
+  depends_on = [module.node_group, module.networking, module.iam, module.eks]
 }
 
 resource "aws_ecr_repository" "frontend" {
