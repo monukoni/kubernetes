@@ -34,11 +34,13 @@ jobs:
           aws ecr get-login-password --region ${{ inputs.AWS_REGION }} | \
             docker login --username AWS --password-stdin ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com
       - name: Build and tags image
-        working-directory: "./src/backend"
+        working-directory: "./src/${{ inputs.CONTAINER_NAME }}"
         run: |
           docker build -t ${{ inputs.CONTAINER_NAME }} .
-          docker tag ${{ inputs.CONTAINER_NAME }} ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test
-          docker tag ${{ inputs.CONTAINER_NAME }} ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test-${{github.run_id}}
+          docker tag ${{ inputs.CONTAINER_NAME }} \
+            ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test
+          docker tag ${{ inputs.CONTAINER_NAME }} \ 
+            ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test-${{github.run_id}}
       - name: Push image to registry
         run: |
           docker push --all-tags ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}
