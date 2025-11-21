@@ -5,5 +5,5 @@ WORKDIR /app
 COPY . .
 
 EXPOSE 80
-RUN go get -u github.com/gorilla/mux
+RUN go mod download
 ENTRYPOINT [ "go", "run", "main.go" ]
