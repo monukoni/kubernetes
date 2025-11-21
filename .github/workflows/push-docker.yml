@@ -17,7 +17,6 @@ on:
       CONTAINER_NAME:
         required: true
         type: string
-    variables:
 
   workflow_dispatch:
 jobs:
