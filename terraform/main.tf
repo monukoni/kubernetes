@@ -58,7 +58,7 @@ resource "kubernetes_storage_class" "gp2_default" {
 module "consul" {
   source                = "./modules/consul"
   consul_variables_path = "./modules/consul/values.yaml"
-  name = var.name
+  name                  = var.name
   depends_on            = [module.node_group, module.networking, module.iam, module.eks]
 }
 
