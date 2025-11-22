@@ -1,9 +1,19 @@
-FROM golang:tip-alpine3.22
+FROM golang:tip-alpine3.22 AS builder
+
+WORKDIR /builder
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . ./
+RUN go build -o app
+
+FROM alpine:3.15
 
 WORKDIR /app
 
-COPY . .
+COPY --from=builder /builder/app ./
 
 EXPOSE 80
-RUN go mod download
-ENTRYPOINT [ "go", "run", "main.go" ]
+
+ENTRYPOINT ["./app"]
