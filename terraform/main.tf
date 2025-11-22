@@ -8,7 +8,7 @@ module "networking" {
 
 module "iam" {
   source         = "./modules/iam"
-  name = var.name
+  name           = var.name
   tags           = var.tags
   aws_account_id = data.aws_caller_identity.current.account_id
   region         = var.region
