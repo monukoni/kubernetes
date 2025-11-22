@@ -8,6 +8,10 @@ on:
             AWS_SECRET_ACCESS_KEY:
                 required: true
     workflow_dispatch:
+
+env:
+  SHORT_SHA: "$(echo ${{ github.sha }} | cut -c1-7)"
+
 jobs: 
     destroy:
         runs-on: ubuntu-latest
@@ -21,14 +25,19 @@ jobs:
 
             - name: Terraform Init
               working-directory: ./terraform
-              run: terraform init -var="name=cicd-${{ github.sha }}" -input=false
+              run: terraform init -var="name=cicd-${{ env.SHORT_SHA }}" -input=false
 
             - name: Terraform workspace
               working-directory: ./terraform
               run: |
-                terraform workspace new cicd-${{ github.sha }}
-                terraform workspace select cicd-${{ github.sha }}
+                terraform workspace select cicd-${{ env.SHORT_SHA }}
 
             - name: Terraform Destroy
               working-directory: ./terraform
-              run: terraform destroy -var="name=cicd-${{ github.sha }}" -auto-approve -input=false
+              run: terraform destroy -var="name=cicd-${{ env.SHORT_SHA }}" -auto-approve -input=false
+
+            - name: Terraform delete
+              if: always()
+              working-directory: ./terraform
+              run: |
+                terraform workspace delete cicd-${{ env.SHORT_SHA }}
