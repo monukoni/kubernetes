@@ -24,7 +24,7 @@ jobs:
 
       - name: Terraform Init
         working-directory: ./terraform
-        run: terraform init -var="name=cicd-${{ env.SHORT_SHA }}" -input=false
+        run: terraform init -input=false
 
       - name: Terraform workspace
         working-directory: ./terraform
