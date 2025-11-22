@@ -1,5 +1,5 @@
 resource "aws_eks_cluster" "eks" {
-  name     = var.name
+  name     = "${var.name}-eks"
   role_arn = var.eks_role_arn
 
   upgrade_policy {

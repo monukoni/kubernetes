@@ -20,7 +20,7 @@ resource "aws_eks_node_group" "eks_node_group" {
 }
 
 resource "aws_iam_role" "eks_node_autoscailing" {
-  name = "${var.name}_node_autoscailing"
+  name = "${var.name}_node_autoscailing_role"
   assume_role_policy = templatefile(var.autoscailing_role_path, {
     "oidc_arn" : var.openid_connect_arn,
   "oidc_url" : var.openid_connect_url })
@@ -28,7 +28,7 @@ resource "aws_iam_role" "eks_node_autoscailing" {
 }
 
 resource "aws_iam_role_policy" "eks_node_autoscailing" {
-  name = "${var.name}_node_autoscailing"
+  name = "${var.name}_node_autoscailing_policy"
   role = aws_iam_role.eks_node_autoscailing.id
   policy = templatefile(var.autoscailing_role_policy_path, {
     "aws_region" : var.region,
@@ -38,7 +38,7 @@ resource "aws_iam_role_policy" "eks_node_autoscailing" {
 
 
 resource "aws_iam_role" "ebs_csi_driver_role" {
-  name = "ebs_csi_driver_role"
+  name = "${var.name}_ebs_csi_driver_role"
   assume_role_policy = templatefile(var.ebs_csi_driver_role_path, {
     "oidc_arn" : var.openid_connect_arn,
   "oidc_url" : var.openid_connect_url })
