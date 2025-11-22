@@ -25,19 +25,20 @@ jobs:
 
             - name: Terraform Init
               working-directory: ./terraform
-              run: terraform init -var="name=cicd-${{ env.SHORT_SHA }}" -input=false
+              run: terraform init -input=false
 
-            - name: Terraform workspace
+            - name: Terraform Select Workspace
               working-directory: ./terraform
               run: |
                 terraform workspace select cicd-${{ env.SHORT_SHA }}
 
             - name: Terraform Destroy
               working-directory: ./terraform
-              run: terraform destroy -var="name=cicd-${{ env.SHORT_SHA }}" -auto-approve -input=false
+              run: terraform destroy -auto-approve -input=false
 
-            - name: Terraform delete
+            - name: Terraform Delete Workspace
               if: always()
               working-directory: ./terraform
               run: |
+                terraform workspace select default
                 terraform workspace delete cicd-${{ env.SHORT_SHA }}

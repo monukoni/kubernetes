@@ -17,8 +17,11 @@ on:
       CONTAINER_NAME:
         required: true
         type: string
-
   workflow_dispatch:
+
+env:
+  SHORT_SHA: "$(echo ${{ github.sha }} | cut -c1-7)"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -40,7 +43,7 @@ jobs:
           docker tag ${{ inputs.CONTAINER_NAME }}:latest \
             ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test
           docker tag ${{ inputs.CONTAINER_NAME }}:latest \
-            ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test-${{ github.sha }}
+            ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test-${{ env.SHORT_SHA }}
       - name: Push image to registry
         run: |
           docker push --all-tags ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}

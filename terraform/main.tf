@@ -8,6 +8,7 @@ module "networking" {
 
 module "iam" {
   source         = "./modules/iam"
+  name = var.name
   tags           = var.tags
   aws_account_id = data.aws_caller_identity.current.account_id
   region         = var.region
@@ -15,6 +16,7 @@ module "iam" {
 
 module "eks" {
   source         = "./modules/eks"
+  name           = var.name
   admin_user_arn = data.aws_iam_user.root.arn
   eks_role_arn   = module.iam.eks_role_arn
   subnets        = module.networking.eks_private_subnets[*].id
@@ -78,14 +80,4 @@ resource "aws_ecr_repository" "backend" {
     scan_on_push = true
   }
   count = terraform.workspace == "default" ? 1 : 0
-}
-
-data "aws_iam_user" "root" {
-  user_name = var.admin_user
-}
-
-data "aws_caller_identity" "current" {}
-
-data "aws_eks_cluster_auth" "eks" {
-  name = module.eks.cluster_name
 }
