@@ -2,15 +2,16 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"runtime"
 	"time"
+
+	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type InfoResponse struct {
@@ -31,7 +32,7 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", getMain).Methods(http.MethodGet)
 	router.Handle("/metrics", promhttp.Handler())
-	router.HandleFunc("/health", getHealth).Methods(http.MethodGet)
+	router.HandleFunc("/healthz", getHealth).Methods(http.MethodGet)
 
 	log.Println("Server is running on http://localhost:80")
 	log.Fatal(http.ListenAndServe("0.0.0.0:80", router))
