@@ -1,0 +1,32 @@
+appName: "frontend"
+
+replicaCount: 1
+
+serviceAccount:
+  name: "frontend"
+
+podAnnotations: {
+  "consul.hashicorp.com/connect-inject": "true",
+}
+
+podLabels: {
+  tier: frontend
+}
+
+deploymentLabels: {
+  tier: frontend
+}
+
+service:
+  name: frontend
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+container:
+  name: frontend
+  port: 80
+  image:
+    repository: 296291473256.dkr.ecr.eu-central-1.amazonaws.com/frontend
+    tag: latest
+

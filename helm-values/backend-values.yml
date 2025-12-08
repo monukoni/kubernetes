@@ -1,0 +1,12 @@
+container:
+  image:
+    tag: test
+
+podAnnotations: {
+  "consul.hashicorp.com/connect-inject": "true",
+  "consul.hashicorp.com/enable-metrics": "true",
+  "consul.hashicorp.com/enable-metrics-merging": "true",
+  prometheus.io/scrape: "true",
+  prometheus.io/path: "/metrics",
+  prometheus.io/port: "20200"
+}

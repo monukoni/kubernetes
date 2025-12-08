@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    {{- include "mychart.selectorLabels" . | indent 4 }}
+    {{- with .Values.deploymentLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "mychart.selectorLabels" . | indent 8 }}
+  template:
+    metadata:
+      {{- if .Values.podAnnotations }}
+      annotations:
+      {{- range $key, $value  := .Values.podAnnotations }}
+        {{  $key | quote }}: {{  $value | quote }}
+      {{- end }}
+      {{- end }}
+      labels:
+        {{- include "mychart.selectorLabels" . | indent 8 }}
+        {{- range $key, $value := .Values.podLabels }}
+        {{  $key }}: {{  $value }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      containers:
+        - name: {{ .Values.container.name }}
+          image: {{ .Values.container.image.repository }}:{{ .Values.container.image.tag }}
+          ports:
+            - containerPort: {{ .Values.container.port }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.container.healthEndpoint }}
+              port: {{ .Values.container.healthPort | default 80 }}

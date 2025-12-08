@@ -1,0 +1,6 @@
+apiVersion: v2
+name: monitoring-intentions
+description: A Helm chart for Consul to create service intentions
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

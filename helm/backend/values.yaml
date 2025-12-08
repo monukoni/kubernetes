@@ -1,0 +1,34 @@
+appName: "backend"
+
+replicaCount: 3
+
+serviceAccount:
+  name: "backend"
+
+podAnnotations: {
+  "consul.hashicorp.com/connect-inject": "true",
+}
+
+podLabels: {
+  tier: backend
+}
+
+deploymentLabels: {
+  tier: backend
+}
+
+service:
+  name: backend
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+container:
+  name: backend
+  port: 80
+  image:
+    repository: 296291473256.dkr.ecr.eu-central-1.amazonaws.com/backend
+    tag: latest
+  healthEndpoint: /healthz
+  healthPort: 80
+
