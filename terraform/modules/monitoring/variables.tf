@@ -1,7 +1,7 @@
 variable "grafana_values_path" {
-  type        = string
+  type = string
 }
 
 variable "prometheus_values_path" {
-  type        = string
+  type = string
 }
