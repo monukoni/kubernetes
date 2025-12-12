@@ -47,7 +47,7 @@ jobs:
   destroy:
         name: Terraform Destroy (always)
         if: always()
-        needs: [plan]
+        needs: [apply]
         uses: ./.github/workflows/terraform-destroy.yml
         secrets: 
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

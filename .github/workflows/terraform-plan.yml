@@ -21,7 +21,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: hashicorp/setup-terraform@v3
-
+      - name: setup tfvars
+        working-directory: ./terraform
+        run: |
+          echo ${{ secrets.CLOUDFLARE_API_TOKEN }} >> terraform.tfvars
+          echo ${{ secrets.ZONE_ID }} >> terraform.tfvars
       - name: Terraform Init
         working-directory: ./terraform
         run: terraform init -input=false
