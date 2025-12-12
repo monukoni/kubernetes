@@ -32,6 +32,17 @@ jobs:
           terraform workspace new cicd-${{ env.SHORT_SHA }}
           terraform workspace select cicd-${{ env.SHORT_SHA }}
 
-      - name: Terraform Apply
+      - name: Terraform plan
         working-directory: ./terraform
-        run: terraform apply -var="name=cicd-${{ env.SHORT_SHA }}" -auto-approve -input=false
+        run: |
+          terraform plan -var="name=cicd-${{ env.SHORT_SHA }}" -input=false -out=tfplan
+          terraform show -no-color tfplan > tfplan.txt
+      
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan
+          path: |
+            ./terraform/tfplan
+            ./terraform/tfplan.txt
