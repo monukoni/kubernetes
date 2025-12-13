@@ -46,6 +46,3 @@ jobs:
       - name: Push image to registry
         run: |
           docker push --all-tags ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}
-          
-
-
