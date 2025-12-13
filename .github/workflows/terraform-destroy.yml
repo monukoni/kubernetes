@@ -37,7 +37,11 @@ jobs:
               working-directory: ./terraform
               run: |
                 terraform workspace select ${{ inputs.WORKSPACE_NAME }}
-
+            - name: setup tfvars
+              working-directory: ./terraform
+              run: |
+                echo cloudflare_api_token=\"${{ secrets.CLOUDFLARE_API_TOKEN }}\" >> terraform.tfvars
+                echo zone_id=\"${{ secrets.ZONE_ID }}\" >> terraform.tfvars
             - name: Terraform Destroy
               working-directory: ./terraform
               run: terraform destroy -auto-approve -input=false
