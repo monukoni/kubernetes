@@ -47,6 +47,9 @@ jobs:
     defaults:
       run:
         working-directory: ./terraform
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -54,6 +57,11 @@ jobs:
         with:
           name: terraform-plan
           path: ./terraform
+      - name: setup tfvars
+        working-directory: ./terraform
+        run: |
+          echo cloudflare_api_token=\"${{ secrets.CLOUDFLARE_API_TOKEN }}\" >> terraform.tfvars
+          echo zone_id=\"${{ secrets.ZONE_ID }}\" >> terraform.tfvars
       - name: Terraform Init
         run: terraform init -input=false
       - name: Terraform Apply
