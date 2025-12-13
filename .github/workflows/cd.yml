@@ -62,6 +62,10 @@ jobs:
         run: |
           echo cloudflare_api_token=\"${{ secrets.CLOUDFLARE_API_TOKEN }}\" >> terraform.tfvars
           echo zone_id=\"${{ secrets.ZONE_ID }}\" >> terraform.tfvars
+      - name: Terraform workspace
+        working-directory: ./terraform
+        run: |
+          terraform workspace select staging
       - name: Terraform Init
         run: terraform init -input=false
       - name: Terraform Apply

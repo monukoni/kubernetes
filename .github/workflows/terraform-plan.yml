@@ -38,8 +38,7 @@ jobs:
       - name: Terraform workspace
         working-directory: ./terraform
         run: |
-          terraform workspace new cicd-${{ env.SHORT_SHA }}
-          terraform workspace select cicd-${{ env.SHORT_SHA }}
+          terraform workspace select staging
 
       - name: Terraform plan
         working-directory: ./terraform
