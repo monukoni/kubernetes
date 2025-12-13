@@ -31,4 +31,9 @@ container:
     tag: latest
   healthEndpoint: /healthz
   healthPort: 80
+  resources:
+    requests:
+      cpu: "100m"
+    limits:
+      cpu: "250m"
 

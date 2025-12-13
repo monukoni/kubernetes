@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: load-testing
+  labels:
+    app: load-testing
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: load-testing
+  template:
+    metadata:
+      name: load-testing
+      labels:
+        app: load-testing
+    spec:
+      containers:
+        - name: load-testing
+          image: 296291473256.dkr.ecr.eu-central-1.amazonaws.com/load_testing
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: ENDPOINT
+              value: "http://monukoni.site/api"
+            - name: WORKERS
+              value: "100"
+          resources:
+            requests:
+              cpu: "100m"
+            limits:
+              cpu: "250m"
+      restartPolicy: Always
+      

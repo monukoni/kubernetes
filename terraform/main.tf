@@ -131,3 +131,13 @@ resource "aws_ecr_repository" "backend" {
 
   count = terraform.workspace == "default" ? 1 : 0
 }
+
+resource "aws_ecr_repository" "load_testing" {
+  name                 = "load_testing"
+  image_tag_mutability = "MUTABLE"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+  count = terraform.workspace == "default" ? 1 : 0
+}

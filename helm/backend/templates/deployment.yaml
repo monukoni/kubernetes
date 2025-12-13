@@ -36,3 +36,8 @@ spec:
             httpGet:
               path: {{ .Values.container.healthEndpoint }}
               port: {{ .Values.container.healthPort | default 80 }}
+          resources:
+            requests:
+              cpu: {{ .Values.container.resources.requests.cpu | quote }}
+            limits:
+              cpu: {{ .Values.container.resources.limits.cpu | quote }}

@@ -13,7 +13,7 @@ import (
 
 func main() {
 	builder := dashboard.NewDashboardBuilder("Dashboard").
-		Uid("generated-from-go").
+		Uid("Main").
 		Refresh("1m").
 		Time("now-30m", "now").
 		Timezone(common.TimeZoneUtc).
@@ -24,7 +24,7 @@ func main() {
 				Min(0).
 				WithTarget(
 					prometheus.NewDataqueryBuilder().
-						Expr(`sum(rate(request_count[5m]))`).
+						Expr(`sum(rate(request_count[$__rate_interval]))`).
 						LegendFormat("Requests"),
 				),
 		).WithPanel(
@@ -34,7 +34,7 @@ func main() {
 			Min(0).
 			WithTarget(
 				prometheus.NewDataqueryBuilder().
-					Expr(`avg(rate(request_count[5m]))`).
+					Expr(`avg(rate(request_count[$__rate_interval]))`).
 					LegendFormat("Requests")),
 	).WithPanel(
 		timeseries.NewPanelBuilder().
@@ -43,7 +43,7 @@ func main() {
 			Min(0).
 			WithTarget(
 				prometheus.NewDataqueryBuilder().
-					Expr(`rate(request_count[5m])`).
+					Expr(`rate(request_count[$__rate_interval])`).
 					LegendFormat("{{ pod }}")))
 
 	dashboard, err := builder.Build()
