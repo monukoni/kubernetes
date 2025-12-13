@@ -1,4 +1,4 @@
-name: push-docker
+name: push docker images
 on:
   workflow_call:
     secrets:

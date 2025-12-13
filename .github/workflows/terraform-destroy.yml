@@ -1,4 +1,4 @@
-name: terraform-destroy
+name: terraform destroy
 
 on: 
     workflow_call:
