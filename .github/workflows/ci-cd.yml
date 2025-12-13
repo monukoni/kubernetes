@@ -7,7 +7,6 @@ jobs:
     lint:
         uses: ./.github/workflows/lint.yml
         permissions:
-            contents: write
             pull-requests: write
 
     changes:
@@ -65,3 +64,5 @@ jobs:
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
             ZONE_ID: ${{ secrets.ZONE_ID }}
+        with:
+          WORKSPACE_NAME: 'staging'

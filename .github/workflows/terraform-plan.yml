@@ -11,10 +11,14 @@ on:
               required: true
             ZONE_ID:
               required: true
+        inputs:
+          WORKSPACE_NAME:
+            description: 'Workspace name'
+            required: true
+            type: string
+            default: 'default'
   workflow_dispatch:
 
-env:
-  SHORT_SHA: "$(echo ${{ github.sha }} | cut -c1-7)"
 
 jobs:
   deploy:
@@ -38,12 +42,12 @@ jobs:
       - name: Terraform workspace
         working-directory: ./terraform
         run: |
-          terraform workspace select staging
+          terraform workspace select ${{ inputs.WORKSPACE_NAME }}
 
       - name: Terraform plan
         working-directory: ./terraform
         run: |
-          terraform plan -var="name=cicd-${{ env.SHORT_SHA }}" -input=false -out=tfplan
+          terraform plan -var="name=${{ inputs.WORKSPACE_NAME }}" -input=false -out=tfplan
           terraform show -no-color tfplan > tfplan.txt
       
 

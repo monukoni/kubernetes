@@ -7,8 +7,12 @@ on:
                 required: true
             AWS_SECRET_ACCESS_KEY:
                 required: true
-            WORKSPACE_NAME: # add functionality
-              required: true
+        inputs:
+          WORKSPACE_NAME:
+            description: 'Workspace name'
+            required: true
+            type: string
+            default: 'default'
     workflow_dispatch:
       inputs:
         WORKSPACE_NAME:
@@ -44,4 +48,4 @@ jobs:
                 echo zone_id=\"${{ secrets.ZONE_ID }}\" >> terraform.tfvars
             - name: Terraform Destroy
               working-directory: ./terraform
-              run: terraform destroy -var="name=cicd-4a856d8" -auto-approve -input=false
+              run: terraform destroy -var="name=${{ inputs.WORKSPACE_NAME }}" -auto-approve -input=false
