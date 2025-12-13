@@ -44,4 +44,4 @@ jobs:
                 echo zone_id=\"${{ secrets.ZONE_ID }}\" >> terraform.tfvars
             - name: Terraform Destroy
               working-directory: ./terraform
-              run: terraform destroy -auto-approve -input=false
+              run: terraform destroy -var="name=cicd-4a856d8" -auto-approve -input=false
