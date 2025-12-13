@@ -5,10 +5,10 @@ WORKDIR /builder
 RUN echo "nobody:x:65534:65534:nobody:/:/sbin/nologin" > passwd
 RUN echo "nobody:x:65534:" > group
 
-COPY go.mod go.sum ./
+COPY go.mod ./
 RUN go mod download
 
-COPY . ./
+COPY .. ./
 RUN go build -o app
 
 FROM scratch

@@ -1,4 +1,4 @@
-name: push-docker
+name: push docker images
 on:
   workflow_call:
     secrets:
@@ -19,9 +19,6 @@ on:
         type: string
   workflow_dispatch:
 
-env:
-  SHORT_SHA: "$(echo ${{ github.sha }} | cut -c1-7)"
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,6 +26,8 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
+      - name: Set SHORT_SHA
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
       - uses: actions/checkout@v5
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
@@ -47,6 +46,3 @@ jobs:
       - name: Push image to registry
         run: |
           docker push --all-tags ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}
-          
-
-

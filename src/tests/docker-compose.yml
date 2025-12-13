@@ -1,0 +1,6 @@
+services:
+  load-testing:
+    build: load_test
+    env_file:
+      - .env
+
