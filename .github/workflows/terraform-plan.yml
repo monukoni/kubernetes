@@ -29,7 +29,7 @@ jobs:
         working-directory: ./terraform
         run: |
           echo "cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" >> terraform.tfvars
-          echo "zone_id=${{ secrets.ZONE_ID }}" >> terraform.tfvars
+          echo -e "zone_id=${{ secrets.ZONE_ID }}\n" >> terraform.tfvars
           echo -e "\n" >> terraform.tfvars
       - name: Terraform Init
         working-directory: ./terraform
