@@ -40,7 +40,7 @@ jobs:
         steps:
             - uses: actions/checkout@v5
             - name: configure aws credentials
-              uses: aws-actions/configure-aws-credentials@v2
+              uses: aws-actions/configure-aws-credentials@v5.1.1
               with:
                 role-to-assume: github_actions_OIDC
                 role-session-name: samplerolesession
