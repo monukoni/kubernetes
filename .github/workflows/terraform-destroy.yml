@@ -42,7 +42,7 @@ jobs:
             - name: configure aws credentials
               uses: aws-actions/configure-aws-credentials@v5.1.1
               with:
-                role-to-assume: github_actions_OIDC
+                role-to-assume: arn:aws:iam::296291473256:role/github_actions_OIDC
                 role-session-name: samplerolesession
                 aws-region: eu-central-1
             - uses: hashicorp/setup-terraform@v3
