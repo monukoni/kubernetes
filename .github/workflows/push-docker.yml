@@ -35,14 +35,13 @@ jobs:
         run: |
           aws ecr get-login-password --region ${{ inputs.AWS_REGION }} | \
             docker login --username AWS --password-stdin ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com
-      - name: Build and tags image
-        working-directory: "./src/${{ inputs.CONTAINER_NAME }}"
-        run: |
-          docker build -t ${{ inputs.CONTAINER_NAME }} .
-          docker tag ${{ inputs.CONTAINER_NAME }}:latest \
-            ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test
-          docker tag ${{ inputs.CONTAINER_NAME }}:latest \
-            ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test-${{ env.SHORT_SHA }}
-      - name: Push image to registry
-        run: |
-          docker push --all-tags ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: "./src/${{ inputs.CONTAINER_NAME }}"
+          push: true
+          tags:
+            - "${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test"
+            - "${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.CONTAINER_NAME }}:test-${{ env.SHORT_SHA }}"
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
