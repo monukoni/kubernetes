@@ -54,6 +54,11 @@ jobs:
         with:
           name: terraform-plan
           path: ./terraform
+
+      - name: Terraform Validate
+        working-directory: ./terraform
+        run: terraform validate
+
       - name: Terraform Init
         run: terraform init -input=false
       - name: Terraform workspace
