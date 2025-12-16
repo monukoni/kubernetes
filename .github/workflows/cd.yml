@@ -15,6 +15,9 @@ on:
             default: 'default'
   workflow_dispatch:
 
+permissions:
+  id-token: write
+
 jobs:
   plan:
         name: Terraform plan
