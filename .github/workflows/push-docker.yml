@@ -1,11 +1,6 @@
 name: push docker images
 on:
   workflow_call:
-    secrets:
-      AWS_ACCESS_KEY_ID:
-        required: true
-      AWS_SECRET_ACCESS_KEY:
-        required: true
     inputs:
       AWS_REGION:
         required: true
@@ -22,19 +17,22 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
       - name: Set SHORT_SHA
         run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
       - uses: actions/checkout@v5
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          role-to-assume: arn:aws:iam::296291473256:role/github_actions_OIDC
+          role-session-name: GHA_DOCKER_PUSH
+          aws-region: eu-central-1
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
-      - name: Set creds for docker
-        run: |
-          aws ecr get-login-password --region ${{ inputs.AWS_REGION }} | \
-            docker login --username AWS --password-stdin ${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:

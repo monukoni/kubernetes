@@ -3,10 +3,6 @@ name: cd
 on: 
   workflow_call:
         secrets:
-            AWS_ACCESS_KEY_ID:
-                required: true
-            AWS_SECRET_ACCESS_KEY:
-                required: true
             CLOUDFLARE_API_TOKEN:
               required: true
             ZONE_ID:
@@ -24,8 +20,6 @@ jobs:
         name: Terraform plan
         uses: ./.github/workflows/terraform-plan.yml
         secrets:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
             ZONE_ID: ${{ secrets.ZONE_ID }}
         with:
@@ -42,13 +36,17 @@ jobs:
       group: terraform-state
       cancel-in-progress: false
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       TF_VAR_zone_id: ${{ secrets.ZONE_ID }}
       TF_IN_AUTOMATION: true
     steps:
       - uses: actions/checkout@v5
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          role-to-assume: arn:aws:iam::296291473256:role/github_actions_OIDC
+          role-session-name: GHA_TF_APPLY
+          aws-region: eu-central-1
       - uses: hashicorp/setup-terraform@v3
       - uses: actions/download-artifact@v5
         with:

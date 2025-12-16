@@ -1,8 +1,7 @@
 name: ci-cd
 
 on:
-#    pull_request:
-  workflow_dispatch:
+    pull_request:
 
 
 jobs:
@@ -34,9 +33,6 @@ jobs:
         if: ${{ needs.changes.outputs.backend == 'true' }}
         uses: ./.github/workflows/push-docker.yml
         needs: ["lint", "changes"]
-        secrets:
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         with:
           AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
           AWS_REGION: 'eu-central-1'
@@ -46,9 +42,6 @@ jobs:
       if: ${{ needs.changes.outputs.frontend == 'true' }}
       uses: ./.github/workflows/push-docker.yml
       needs: ["lint", "changes"]
-      secrets:
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       with:
         AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
         AWS_REGION: 'eu-central-1'
@@ -63,8 +56,6 @@ jobs:
           (needs.frontend-push.result == 'success' || needs.frontend-push.result == 'skipped')
         uses: ./.github/workflows/cd.yml
         secrets:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
             ZONE_ID: ${{ secrets.ZONE_ID }}
         with:
