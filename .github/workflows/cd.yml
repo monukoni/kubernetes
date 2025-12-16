@@ -56,12 +56,13 @@ jobs:
           name: terraform-plan
           path: ./terraform
 
+      - name: Terraform Init
+        run: terraform init -input=false
+
       - name: Terraform Validate
         working-directory: ./terraform
         run: terraform validate
 
-      - name: Terraform Init
-        run: terraform init -input=false
       - name: Terraform workspace
         working-directory: ./terraform
         run: |
