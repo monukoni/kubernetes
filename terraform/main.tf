@@ -141,3 +141,36 @@ resource "aws_ecr_repository" "load_testing" {
 
   count = terraform.workspace == "default" ? 1 : 0
 }
+
+resource "aws_iam_openid_connect_provider" "github_actions" {
+  url = "https://token.actions.githubusercontent.com"
+
+  client_id_list = [
+    "sts.amazonaws.com",
+  ]
+
+  count = terraform.workspace == "default" ? 1 : 0
+}
+
+resource "aws_iam_role" "github_actions_OIDC" {
+  name = "github_actions_OIDC"
+
+  assume_role_policy = file("./policies/oidc_githubactions_role.json")
+
+  count = terraform.workspace == "default" ? 1 : 0
+}
+
+resource "aws_iam_policy" "github_actions_OIDC_policy" {
+  name        = "gh_oidc_policy"
+  description = "A test policy"
+  policy      = file("./policies/oidc_gha_role_policy.json")
+
+  count = terraform.workspace == "default" ? 1 : 0
+}
+
+resource "aws_iam_role_policy_attachment" "github_actions_OIDC_policy_attach" {
+  role       = aws_iam_role.github_actions_OIDC[0].name
+  policy_arn = aws_iam_policy.github_actions_OIDC_policy[0].arn
+
+  count = terraform.workspace == "default" ? 1 : 0
+}
