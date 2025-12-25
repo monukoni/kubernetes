@@ -152,6 +152,11 @@ resource "aws_iam_openid_connect_provider" "github_actions" {
   count = terraform.workspace == "default" ? 1 : 0
 }
 
+resource "aws_eks_access_entry" "example" {
+  cluster_name      = module.eks.cluster_name
+  principal_arn     = aws_iam_role.github_actions_OIDC[0].arn
+}
+
 resource "aws_iam_role" "github_actions_OIDC" {
   name = "github_actions_OIDC"
 
