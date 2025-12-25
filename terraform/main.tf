@@ -154,7 +154,7 @@ resource "aws_iam_openid_connect_provider" "github_actions" {
 resource "aws_iam_role" "github_actions_OIDC" {
   name = "github_actions_oidc-${var.name}"
   assume_role_policy = templatefile("./policies/oidc_githubactions_role.json", {
-    "oidc_arn" : aws_iam_openid_connect_provider.github_actions.arn,
+    "oidc_arn" : aws_iam_openid_connect_provider.github_actions[0].arn,
     "gh_oidc_sub" : var.gh_oidc_sub
   })
 }
