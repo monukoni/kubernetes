@@ -163,7 +163,7 @@ resource "aws_iam_role" "github_actions_OIDC" {
 resource "aws_iam_policy" "github_actions_OIDC_policy" {
   name   = "github_actions_oidc_policy"
   policy = file("./policies/oidc_gha_role_policy.json")
-  count = terraform.workspace == "default" ? 1 : 0
+  count  = terraform.workspace == "default" ? 1 : 0
 }
 
 resource "aws_iam_role_policy_attachment" "github_actions_OIDC_policy_attach" {
