@@ -4,12 +4,12 @@
     {
       "Effect": "Allow",
       "Principal": {
-        "Federated": "arn:aws:iam::296291473256:oidc-provider/token.actions.githubusercontent.com"
+        "Federated": "${oidc_arn}"
       },
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringLike": {
-          "token.actions.githubusercontent.com:sub": "repo:monukoni/kubernetes:*"
+          "token.actions.githubusercontent.com:sub": "${gh_oidc_sub}"
         },
         "StringEquals": {
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"

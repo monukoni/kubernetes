@@ -103,7 +103,7 @@ resource "helm_release" "load-balancer" {
   depends_on = [module.eks, module.consul, module.node_group, helm_release.frontend]
 }
 
-resource "cloudflare_dns_record" "example_dns_record" {
+resource "cloudflare_dns_record" "main_dns_record" {
   zone_id = var.zone_id
   name    = "@"
   ttl     = 300
@@ -148,35 +148,37 @@ resource "aws_iam_openid_connect_provider" "github_actions" {
   client_id_list = [
     "sts.amazonaws.com",
   ]
-
   count = terraform.workspace == "default" ? 1 : 0
-}
-
-resource "aws_eks_access_entry" "example" {
-  cluster_name  = "staging-eks" # module.eks.cluster_name
-  principal_arn = aws_iam_role.github_actions_OIDC[0].arn
-  count         = terraform.workspace == "default" ? 1 : 0
 }
 
 resource "aws_iam_role" "github_actions_OIDC" {
-  name = "github_actions_OIDC"
-
-  assume_role_policy = file("./policies/oidc_githubactions_role.json")
-
-  count = terraform.workspace == "default" ? 1 : 0
+  name = "github_actions_oidc-${var.name}"
+  assume_role_policy = templatefile("./policies/oidc_githubactions_role.json", {
+    "oidc_arn" : aws_iam_openid_connect_provider.github_actions.arn,
+    "gh_oidc_sub": var.gh_oidc_sub
+  })
 }
 
 resource "aws_iam_policy" "github_actions_OIDC_policy" {
-  name        = "gh_oidc_policy"
-  description = "A test policy"
+  name        = "github_actions_oidc_policy-${var.name}"
   policy      = file("./policies/oidc_gha_role_policy.json")
-
-  count = terraform.workspace == "default" ? 1 : 0
 }
 
 resource "aws_iam_role_policy_attachment" "github_actions_OIDC_policy_attach" {
-  role       = aws_iam_role.github_actions_OIDC[0].name
-  policy_arn = aws_iam_policy.github_actions_OIDC_policy[0].arn
+  role       = aws_iam_role.github_actions_OIDC.name
+  policy_arn = aws_iam_policy.github_actions_OIDC_policy.arn
+}
 
-  count = terraform.workspace == "default" ? 1 : 0
+resource "aws_eks_access_entry" "github_action" {
+  cluster_name  = module.eks.cluster_name
+  principal_arn = aws_iam_role.github_actions_OIDC.arn
+}
+
+resource "aws_eks_access_policy_association" "gha_tf_plan_admin" {
+  cluster_name  = module.eks.cluster_name
+  principal_arn = aws_eks_access_entry.github_action.principal_arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  access_scope {
+    type = "cluster"
+  }
 }

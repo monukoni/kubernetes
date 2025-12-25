@@ -23,7 +23,12 @@ variable "admin_user" {
 
 variable "name" {
   type    = string
-  default = "eks"
+  default = "default"
+}
+
+variable "gh_oidc_sub" {
+  type = string
+  default = "repo:monukoni/kubernetes:*"
 }
 
 # move to vault
