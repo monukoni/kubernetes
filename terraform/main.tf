@@ -155,13 +155,13 @@ resource "aws_iam_role" "github_actions_OIDC" {
   name = "github_actions_oidc-${var.name}"
   assume_role_policy = templatefile("./policies/oidc_githubactions_role.json", {
     "oidc_arn" : aws_iam_openid_connect_provider.github_actions.arn,
-    "gh_oidc_sub": var.gh_oidc_sub
+    "gh_oidc_sub" : var.gh_oidc_sub
   })
 }
 
 resource "aws_iam_policy" "github_actions_OIDC_policy" {
-  name        = "github_actions_oidc_policy-${var.name}"
-  policy      = file("./policies/oidc_gha_role_policy.json")
+  name   = "github_actions_oidc_policy-${var.name}"
+  policy = file("./policies/oidc_gha_role_policy.json")
 }
 
 resource "aws_iam_role_policy_attachment" "github_actions_OIDC_policy_attach" {

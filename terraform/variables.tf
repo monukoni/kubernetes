@@ -27,7 +27,7 @@ variable "name" {
 }
 
 variable "gh_oidc_sub" {
-  type = string
+  type    = string
   default = "repo:monukoni/kubernetes:*"
 }
 
