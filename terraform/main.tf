@@ -157,21 +157,23 @@ resource "aws_iam_role" "github_actions_OIDC" {
     "oidc_arn" : aws_iam_openid_connect_provider.github_actions[0].arn,
     "gh_oidc_sub" : var.gh_oidc_sub
   })
+  count = terraform.workspace == "default" ? 1 : 0
 }
 
 resource "aws_iam_policy" "github_actions_OIDC_policy" {
   name   = "github_actions_oidc_policy"
   policy = file("./policies/oidc_gha_role_policy.json")
+  count = terraform.workspace == "default" ? 1 : 0
 }
 
 resource "aws_iam_role_policy_attachment" "github_actions_OIDC_policy_attach" {
-  role       = aws_iam_role.github_actions_OIDC.name
-  policy_arn = aws_iam_policy.github_actions_OIDC_policy.arn
+  role       = aws_iam_role.github_actions_OIDC[0].name
+  policy_arn = aws_iam_policy.github_actions_OIDC_policy[0].arn
 }
 
 resource "aws_eks_access_entry" "github_action" {
   cluster_name  = module.eks.cluster_name
-  principal_arn = aws_iam_role.github_actions_OIDC.arn
+  principal_arn = aws_iam_role.github_actions_OIDC[0].arn
 }
 
 resource "aws_eks_access_policy_association" "gha_tf_plan_admin" {
