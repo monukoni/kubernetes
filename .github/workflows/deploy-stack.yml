@@ -18,15 +18,15 @@ permissions:
   id-token: write
 
 jobs:
-  bootstrap:
-    uses: ./.github/workflows/cd.yml
-    secrets: inherit
-    with:
-      WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
-      LAYER: bootstrap
+#  bootstrap:
+#    uses: ./.github/workflows/cd.yml
+#    secrets: inherit
+#    with:
+#      WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
+#      LAYER: bootstrap
 
   ops:
-    needs: [bootstrap]
+#    needs: [bootstrap]
     uses: ./.github/workflows/cd.yml
     secrets: inherit
     with:
