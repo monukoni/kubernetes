@@ -53,11 +53,9 @@ jobs:
         run: terraform init -input=false
 
       - name: Terraform Validate
-#        working-directory: ./terraform
         run: terraform validate
 
       - name: Terraform workspace
-#        working-directory: ./terraform
         run: |
           terraform workspace select ${{ inputs.WORKSPACE_NAME }}
       - name: Terraform Apply

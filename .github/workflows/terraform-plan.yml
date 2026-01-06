@@ -45,20 +45,16 @@ jobs:
           aws-region: eu-central-1
       - uses: hashicorp/setup-terraform@v3
       - name: Terraform Init
-#        working-directory: ./terraform
         run: terraform init -input=false
 
       - name: Terraform Validate
-#        working-directory: ./terraform
         run: terraform validate
 
       - name: Terraform workspace
-#        working-directory: ./terraform
         run: |
           terraform workspace select ${{ inputs.WORKSPACE_NAME }}
 
       - name: Terraform plan
-#        working-directory: ./terraform
         run: |
           terraform plan -var="name=${{ inputs.WORKSPACE_NAME }}" -lock=true -lock-timeout=5m -input=false -out=tfplan
           terraform show -no-color tfplan > tfplan.txt

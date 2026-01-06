@@ -8,6 +8,10 @@ on:
             required: true
             type: string
             default: 'default'
+          LAYER:
+            description: 'Layer name which have to be deployed (e.g. bootstrap, ops, app)'
+            type: string
+            default: bootstrap
     workflow_dispatch:
       inputs:
         WORKSPACE_NAME:
@@ -15,6 +19,15 @@ on:
           required: true
           type: string
           default: 'default'
+        LAYER:
+          description: 'Layer name which have to be deployed (e.g. bootstrap, ops, app)'
+          required: true
+          default: 'bootstrap'
+          type: choice
+          options:
+            - bootstrap
+            - ops
+            - app
 
 permissions:
   id-token: write
@@ -26,6 +39,9 @@ jobs:
         concurrency:
           group: terraform-state
           cancel-in-progress: false
+        defaults:
+          run:
+            working-directory: ./terraform/layers/${{ inputs.LAYER }}
         env:
             TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
             TF_VAR_zone_id: ${{ secrets.ZONE_ID }}
@@ -41,18 +57,13 @@ jobs:
             - uses: hashicorp/setup-terraform@v3
 
             - name: Terraform Init
-              working-directory: ./terraform
               run: terraform init -input=false
 
             - name: Terraform Validate
-              working-directory: ./terraform
               run: terraform validate
 
-
             - name: Terraform Select Workspace
-              working-directory: ./terraform
               run: |
                 terraform workspace select ${{ inputs.WORKSPACE_NAME }}
             - name: Terraform Destroy
-              working-directory: ./terraform
               run: terraform destroy -var="name=${{ inputs.WORKSPACE_NAME }}" -lock=true -lock-timeout=5m -auto-approve -input=false
