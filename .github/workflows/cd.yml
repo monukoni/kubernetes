@@ -27,6 +27,7 @@ jobs:
         ZONE_ID: ${{ secrets.ZONE_ID }}
     with:
       WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
+      LAYER: 'ops'
 
   apply:
     name: Terraform apply
