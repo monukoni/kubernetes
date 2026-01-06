@@ -68,5 +68,5 @@ jobs:
         with:
           name: terraform-plan
           path: |
-            ./terraform/tfplan
-            ./terraform/tfplan.txt
+            ./terraform/layers/${{ inputs.LAYER }}/tfplan
+            ./terraform/layers/${{ inputs.LAYER }}/tfplan.txt
