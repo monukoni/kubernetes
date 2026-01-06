@@ -6,9 +6,9 @@ module "networking" {
 }
 
 module "iam" {
-  source         = "../../modules/iam"
-  name           = var.name
-  tags           = var.tags
+  source = "../../modules/iam"
+  name   = var.name
+  tags   = var.tags
 }
 
 module "eks" {

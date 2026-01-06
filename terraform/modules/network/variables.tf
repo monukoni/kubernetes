@@ -7,7 +7,7 @@ locals {
 
 variable "az_count" {
   default = 3
-  type = number
+  type    = number
 }
 
 variable "vpc_cidr" {

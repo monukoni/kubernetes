@@ -1,8 +1,8 @@
 module "gh_oidc" {
-  source   = "../../modules/gh_oidc"
+  source                    = "../../modules/gh_oidc"
   oidc_gha_role_policy_path = "../../policies/oidc_gha_role_policy.json"
-  oidc_gha_role_path = "../../policies/oidc_gha_role.json"
-  gh_oidc_sub = var.gh_oidc_sub
+  oidc_gha_role_path        = "../../policies/oidc_gha_role.json"
+  gh_oidc_sub               = var.gh_oidc_sub
 }
 
 resource "aws_ecr_repository" "frontend" {
