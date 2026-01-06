@@ -20,7 +20,7 @@ on:
           type: string
           default: 'default'
         LAYER:
-          description: 'Layer name which have to be deployed (e.g. bootstrap, ops, app)'
+          description: 'Layer name which have to be deployed'
           required: true
           default: 'bootstrap'
           type: choice

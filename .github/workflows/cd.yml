@@ -13,7 +13,11 @@ on:
             required: true
             type: string
             default: 'default'
-  workflow_dispatch:
+          LAYER:
+            description: 'Layer name which have to be deployed (e.g. bootstrap, ops, app)'
+            type: string
+            default: bootstrap
+#  workflow_dispatch:
 
 permissions:
   id-token: write
@@ -27,7 +31,7 @@ jobs:
         ZONE_ID: ${{ secrets.ZONE_ID }}
     with:
       WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
-      LAYER: 'ops'
+      LAYER: ${{ inputs.LAYER }}
 
   apply:
     name: Terraform apply
@@ -38,4 +42,4 @@ jobs:
       ZONE_ID: ${{ secrets.ZONE_ID }}
     with:
       WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
-      LAYER: 'ops'
+      LAYER: ${{ inputs.LAYER }}

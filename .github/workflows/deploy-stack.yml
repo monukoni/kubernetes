@@ -1,0 +1,38 @@
+name: deploy stack
+
+on:
+  workflow_dispatch:
+    inputs:
+      WORKSPACE_NAME:
+        description: 'Workspace name'
+        required: true
+        type: string
+        default: 'default'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  bootstrap:
+    uses: ./.github/workflows/cd.yml
+    secrets: inherit
+    with:
+      WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
+      LAYER: bootstrap
+
+  ops:
+    needs: [bootstrap]
+    uses: ./.github/workflows/cd.yml
+    secrets: inherit
+    with:
+      WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
+      LAYER: ops
+
+  app:
+    needs: [ops]
+    uses: ./.github/workflows/cd.yml
+    secrets: inherit
+    with:
+      WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
+      LAYER: app
