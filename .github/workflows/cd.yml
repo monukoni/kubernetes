@@ -3,10 +3,6 @@ name: cd
 on: 
   workflow_call:
         secrets:
-            AWS_ACCESS_KEY_ID:
-                required: true
-            AWS_SECRET_ACCESS_KEY:
-                required: true
             CLOUDFLARE_API_TOKEN:
               required: true
             ZONE_ID:
@@ -17,50 +13,33 @@ on:
             required: true
             type: string
             default: 'default'
-  workflow_dispatch:
+          LAYER:
+            description: 'Layer name which have to be deployed (e.g. bootstrap, ops, app)'
+            type: string
+            default: bootstrap
+#  workflow_dispatch:
+
+permissions:
+  id-token: write
 
 jobs:
   plan:
-        name: Terraform plan
-        uses: ./.github/workflows/terraform-plan.yml
-        secrets:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-            ZONE_ID: ${{ secrets.ZONE_ID }}
-        with:
-          WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
+    name: Terraform plan
+    uses: ./.github/workflows/terraform-plan.yml
+    secrets:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        ZONE_ID: ${{ secrets.ZONE_ID }}
+    with:
+      WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
+      LAYER: ${{ inputs.LAYER }}
 
   apply:
-    environment: staging
-    runs-on: ubuntu-latest
+    name: Terraform apply
+    uses: ./.github/workflows/terraform-apply.yml
     needs: [ "plan" ]
-    defaults:
-      run:
-        working-directory: ./terraform
-    concurrency:
-      group: terraform-state
-      cancel-in-progress: false
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
-      - uses: actions/download-artifact@v5
-        with:
-          name: terraform-plan
-          path: ./terraform
-      - name: setup tfvars
-        working-directory: ./terraform
-        run: |
-          echo cloudflare_api_token=\"${{ secrets.CLOUDFLARE_API_TOKEN }}\" >> terraform.tfvars
-          echo zone_id=\"${{ secrets.ZONE_ID }}\" >> terraform.tfvars
-      - name: Terraform Init
-        run: terraform init -input=false
-      - name: Terraform workspace
-        working-directory: ./terraform
-        run: |
-          terraform workspace select ${{ inputs.WORKSPACE_NAME }}
-      - name: Terraform Apply
-        run: terraform apply -input=false tfplan
+    secrets:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      ZONE_ID: ${{ secrets.ZONE_ID }}
+    with:
+      WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
+      LAYER: ${{ inputs.LAYER }}

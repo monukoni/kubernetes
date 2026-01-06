@@ -1,0 +1,42 @@
+name: deploy stack
+
+on:
+  workflow_call:
+    secrets:
+      CLOUDFLARE_API_TOKEN:
+        required: true
+      ZONE_ID:
+        required: true
+    inputs:
+      WORKSPACE_NAME:
+        description: 'Workspace name'
+        required: true
+        type: string
+        default: 'default'
+
+permissions:
+  id-token: write
+
+jobs:
+  bootstrap:
+    uses: ./.github/workflows/cd.yml
+    secrets: inherit
+    with:
+      WORKSPACE_NAME: "default"
+      LAYER: bootstrap
+
+  ops:
+    needs: [bootstrap]
+    uses: ./.github/workflows/cd.yml
+    secrets: inherit
+    with:
+      WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
+      LAYER: ops
+
+  app:
+    needs: [ops]
+    uses: ./.github/workflows/cd.yml
+    secrets: inherit
+    with:
+      WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
+      LAYER: app

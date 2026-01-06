@@ -2,17 +2,16 @@ name: terraform destroy
 
 on: 
     workflow_call:
-        secrets:
-            AWS_ACCESS_KEY_ID:
-                required: true
-            AWS_SECRET_ACCESS_KEY:
-                required: true
         inputs:
           WORKSPACE_NAME:
             description: 'Workspace name'
             required: true
             type: string
             default: 'default'
+          LAYER:
+            description: 'Layer name which have to be deployed (e.g. bootstrap, ops, app)'
+            type: string
+            default: bootstrap
     workflow_dispatch:
       inputs:
         WORKSPACE_NAME:
@@ -20,7 +19,19 @@ on:
           required: true
           type: string
           default: 'default'
+        LAYER:
+          description: 'Layer name which have to be deployed'
+          required: true
+          default: 'bootstrap'
+          type: choice
+          options:
+            - bootstrap
+            - ops
+            - app
 
+permissions:
+  id-token: write
+  contents: read
 
 jobs: 
     destroy:
@@ -28,27 +39,31 @@ jobs:
         concurrency:
           group: terraform-state
           cancel-in-progress: false
+        defaults:
+          run:
+            working-directory: ./terraform/layers/${{ inputs.LAYER }}
         env:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY }}
+            TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+            TF_VAR_zone_id: ${{ secrets.ZONE_ID }}
+            TF_IN_AUTOMATION: true
         steps:
-            - uses: actions/checkout@v3
-
+            - uses: actions/checkout@v5
+            - name: configure aws credentials
+              uses: aws-actions/configure-aws-credentials@v5.1.1
+              with:
+                role-to-assume: arn:aws:iam::296291473256:role/github_actions_oidc
+                role-session-name: GHA_TF_DESTROY
+                aws-region: eu-central-1
             - uses: hashicorp/setup-terraform@v3
 
             - name: Terraform Init
-              working-directory: ./terraform
               run: terraform init -input=false
 
+            - name: Terraform Validate
+              run: terraform validate
+
             - name: Terraform Select Workspace
-              working-directory: ./terraform
               run: |
                 terraform workspace select ${{ inputs.WORKSPACE_NAME }}
-            - name: setup tfvars
-              working-directory: ./terraform
-              run: |
-                echo cloudflare_api_token=\"${{ secrets.CLOUDFLARE_API_TOKEN }}\" >> terraform.tfvars
-                echo zone_id=\"${{ secrets.ZONE_ID }}\" >> terraform.tfvars
             - name: Terraform Destroy
-              working-directory: ./terraform
-              run: terraform destroy -var="name=${{ inputs.WORKSPACE_NAME }}" -auto-approve -input=false
+              run: terraform destroy -var="name=${{ inputs.WORKSPACE_NAME }}" -lock=true -lock-timeout=5m -auto-approve -input=false

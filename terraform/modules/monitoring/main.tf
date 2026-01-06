@@ -27,7 +27,7 @@ resource "helm_release" "prometheus" {
 }
 
 resource "helm_release" "grafana-prometheus-intentions" {
-  chart = "../helm/service-intentions"
+  chart = "../../../helm/service-intentions"
   name  = "grafana-prometheus-intentions"
 
   wait            = true
