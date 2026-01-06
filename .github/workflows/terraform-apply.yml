@@ -46,7 +46,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
       - uses: actions/download-artifact@v5
         with:
-          name: terraform-plan
+          name: terraform-plan-${{ inputs.WORKSPACE_NAME }}-${{ inputs.LAYER }}
           path: ./terraform/layers/${{ inputs.LAYER }}
 
       - name: Terraform Init
