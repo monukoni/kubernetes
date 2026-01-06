@@ -14,6 +14,7 @@ data "terraform_remote_state" "eks" {
     key    = "terraform-ops.tfstate"
     region = var.region
   }
+  workspace = var.name
 }
 
 data "aws_resourcegroupstaggingapi_resources" "consul_elb_search" {
