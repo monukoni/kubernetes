@@ -1,7 +1,7 @@
 name: deploy stack
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       WORKSPACE_NAME:
         description: 'Workspace name'
