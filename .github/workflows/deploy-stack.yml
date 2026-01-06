@@ -2,6 +2,11 @@ name: deploy stack
 
 on:
   workflow_call:
+    secrets:
+      CLOUDFLARE_API_TOKEN:
+        required: true
+      ZONE_ID:
+        required: true
     inputs:
       WORKSPACE_NAME:
         description: 'Workspace name'
