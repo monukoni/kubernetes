@@ -1,0 +1,64 @@
+name: terraform apply
+
+on:
+  workflow_call:
+    secrets:
+      CLOUDFLARE_API_TOKEN:
+        required: true
+      ZONE_ID:
+        required: true
+    inputs:
+      WORKSPACE_NAME:
+        description: 'Workspace name'
+        required: true
+        type: string
+        default: 'default'
+      LAYER:
+        description: 'Layer name which have to be deployed (e.g. bootstrap, ops, app)'
+        type: string
+        default: bootstrap
+
+permissions:
+  id-token: write
+
+jobs:
+  apply:
+    environment: staging
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform/layers/${{ inputs.LAYER }}
+    concurrency:
+      group: terraform-state
+      cancel-in-progress: false
+    env:
+      TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_zone_id: ${{ secrets.ZONE_ID }}
+      TF_IN_AUTOMATION: true
+    steps:
+      - uses: actions/checkout@v5
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          role-to-assume: arn:aws:iam::296291473256:role/github_actions_oidc
+          role-session-name: GHA_TF_APPLY
+          aws-region: eu-central-1
+      - uses: hashicorp/setup-terraform@v3
+      - uses: actions/download-artifact@v5
+        with:
+          name: terraform-plan
+          path: ./terraform/layers/${{ inputs.LAYER }}
+
+      - name: Terraform Init
+        run: terraform init -input=false
+
+      - name: Terraform Validate
+#        working-directory: ./terraform
+        run: terraform validate
+
+      - name: Terraform workspace
+#        working-directory: ./terraform
+        run: |
+          terraform workspace select ${{ inputs.WORKSPACE_NAME }}
+      - name: Terraform Apply
+        run: terraform apply -lock=true -lock-timeout=5m -input=false tfplan

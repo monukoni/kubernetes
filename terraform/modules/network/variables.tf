@@ -1,8 +1,13 @@
 locals {
-  avz-cidrs = [
-    for idx in range(length(data.aws_availability_zones.avz.names) * 2) :
-    cidrsubnet(var.vpc_cidr, 4, idx + 1)
+  avz_cidrs = [
+    for idx in range(var.az_count * 2) :
+    cidrsubnet(var.vpc_cidr, 6, idx + 1)
   ]
+}
+
+variable "az_count" {
+  default = 3
+  type = number
 }
 
 variable "vpc_cidr" {
@@ -13,11 +18,6 @@ variable "vpc_cidr" {
 variable "tags" {
   type    = map(string)
   default = {}
-}
-
-variable "region" {
-  type    = string
-  default = "eu-central-1"
 }
 
 variable "name" {

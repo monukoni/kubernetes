@@ -12,10 +12,10 @@ resource "aws_vpc" "eks_vpc" {
 
 resource "aws_subnet" "eks_private_subnets" {
   vpc_id            = aws_vpc.eks_vpc.id
-  cidr_block        = local.avz-cidrs[count.index]
+  cidr_block        = local.avz_cidrs[count.index]
   availability_zone = data.aws_availability_zones.avz.names[count.index]
 
-  count = length(data.aws_availability_zones.avz.names)
+  count = var.az_count
 
   tags = merge({
     "Name" : "${var.name}_private${count.index}_subnet" },
@@ -25,10 +25,10 @@ resource "aws_subnet" "eks_private_subnets" {
 
 resource "aws_subnet" "eks_public_subnets" {
   vpc_id            = aws_vpc.eks_vpc.id
-  cidr_block        = local.avz-cidrs[count.index + length(data.aws_availability_zones.avz.names)]
+  cidr_block        = local.avz_cidrs[count.index + var.az_count]
   availability_zone = data.aws_availability_zones.avz.names[count.index]
 
-  count = length(data.aws_availability_zones.avz.names)
+  count = var.az_count
 
   tags = merge({
     "Name" : "${var.name}_public${count.index}_subnet" },
@@ -46,11 +46,6 @@ resource "aws_internet_gateway" "gw" {
 
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.eks_vpc.id
-
-  route {
-    cidr_block = var.vpc_cidr
-    gateway_id = "local"
-  }
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -93,11 +88,6 @@ resource "aws_nat_gateway" "eks" {
 
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.eks_vpc.id
-
-  route {
-    cidr_block = var.vpc_cidr
-    gateway_id = "local"
-  }
 
   route {
     cidr_block     = "0.0.0.0/0"
