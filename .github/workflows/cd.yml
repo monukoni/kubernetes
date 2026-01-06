@@ -37,5 +37,5 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       ZONE_ID: ${{ secrets.ZONE_ID }}
     with:
-      WORKSPACE_NAME: 'default'
+      WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
       LAYER: 'ops'
