@@ -50,6 +50,8 @@ jobs:
           role-session-name: GHA_TF_PLAN
           aws-region: eu-central-1
       - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
       - name: Terraform Init
         run: terraform init -input=false
 
