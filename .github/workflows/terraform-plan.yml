@@ -66,6 +66,7 @@ jobs:
           set +e
           terraform plan -detailed-exitcode -var="name=${{ inputs.WORKSPACE_NAME }}" -lock=true -lock-timeout=5m -input=false -out=tfplan
           exitcode=$?
+          echo "$exitcode"
           echo "plan_exitcode=$exitcode" >> $GITHUB_OUTPUT
           if [ $exitcode -eq 1 ]; then
             exit 1
