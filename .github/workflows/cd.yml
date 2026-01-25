@@ -34,8 +34,8 @@ jobs:
       LAYER: ${{ inputs.LAYER }}
 
   apply:
-    name: Terraform apply
-    if: needs.plan.outputs.plan_exitcode == '2'
+    name: Terraform apply ${{ needs.plan.outputs.plan_exitcode}}
+    if: ${{ needs.plan.outputs.plan_exitcode == '2' }} 
     uses: ./.github/workflows/terraform-apply.yml
     needs: [ "plan" ]
     secrets:

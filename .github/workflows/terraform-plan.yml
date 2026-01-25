@@ -40,7 +40,7 @@ jobs:
             TF_VAR_zone_id: ${{ secrets.ZONE_ID }}
             TF_IN_AUTOMATION: true
     outputs:
-      plan_exitcode: ${{ steps.tf-plan.outputs.plan_exitcode }}
+      plan_exitcode: ${{ steps.tf_plan.outputs.plan_exitcode }}
     steps:
       - uses: actions/checkout@v5
       - name: configure aws credentials
@@ -61,7 +61,7 @@ jobs:
           terraform workspace select ${{ inputs.WORKSPACE_NAME }}
 
       - name: Terraform plan
-        id: tf-plan
+        id: tf_plan
         run: |
           set +e
           terraform plan -detailed-exitcode -var="name=${{ inputs.WORKSPACE_NAME }}" -lock=true -lock-timeout=5m -input=false -out=tfplan
