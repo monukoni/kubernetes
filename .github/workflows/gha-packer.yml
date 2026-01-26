@@ -4,7 +4,10 @@ on:
   push:
     branches:
       - main
-  pull_request:
+      - add-argocd
+    paths:
+      - "packer/github_runner/**"
+
 
 env:
   PRODUCT_VERSION: "1.14.3"
