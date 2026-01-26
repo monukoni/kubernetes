@@ -43,6 +43,7 @@ jobs:
 
       - name: Terraform Init
         run: terraform init -input=false
+        working-directory: ./terraform/layers/bootstrap
       
       - name: Install jq
         run: sudo apt-get install -y jq
