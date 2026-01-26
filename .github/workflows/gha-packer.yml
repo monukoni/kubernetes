@@ -51,7 +51,7 @@ jobs:
       - name: Get vpc_id
         run: |
             export VPC_ID=$(terraform output -json |  jq -r '.vpc_id.value')
-            echo "VPC_ID: $VPC_ID" >> $GITHUB_ENV
+            echo "VPC_ID=$VPC_ID" >> $GITHUB_ENV
         working-directory: ./terraform/layers/bootstrap
 
       - name: Run `packer init`
