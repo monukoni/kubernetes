@@ -1,0 +1,31 @@
+name: packer
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  PRODUCT_VERSION: "1.14.3"
+
+jobs:
+  packer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@v3.1.0
+        with:
+          version: ${{ env.PRODUCT_VERSION }}
+
+      - name: Run `packer init`
+        run: "packer init ./packer/github_runner/"
+
+      - name: Run `packer validate`
+        run: "packer validate ./packer/github_runner/"
+
+      - name: Run `packer build`
+        run: "packer build ./packer/github_runner/"
