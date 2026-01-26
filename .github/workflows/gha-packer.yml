@@ -1,4 +1,5 @@
 name: packer
+run-name: Build AMI for GitHub Runner by @${{ github.actor }}
 
 on:
   push:
