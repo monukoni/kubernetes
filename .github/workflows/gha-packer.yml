@@ -11,6 +11,8 @@ on:
       - ".github/workflows/gha-packer.yml"
   workflow_dispatch:
 
+permissions:
+  id-token: write
 
 env:
   PRODUCT_VERSION: "1.14.3"
