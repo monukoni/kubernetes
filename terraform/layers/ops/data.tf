@@ -19,4 +19,4 @@ data "terraform_remote_state" "bootstrap" {
     key    = "terraform.tfstate"
     region = "eu-central-1"
   }
-}
+}
