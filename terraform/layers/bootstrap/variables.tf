@@ -8,7 +8,8 @@ variable "region" {
 }
 
 variable "name" {
-
+  type    = string
+  default = ""
 }
 
 variable "vpc_cidr" {
