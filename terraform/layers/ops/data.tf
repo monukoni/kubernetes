@@ -11,3 +11,12 @@ data "aws_iam_role" "github_actions_OIDC" {
 data "aws_eks_cluster_auth" "eks" {
   name = module.eks.cluster_name
 }
+
+data "terraform_remote_state" "bootstrap" {
+  backend = "s3"
+  config = {
+    bucket = "terraform-project-state-bucket312"
+    key    = "terraform.tfstate"
+    region = "eu-central-1"
+  }
+}

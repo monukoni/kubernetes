@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - add-argocd
     paths:
       - "packer/github_runner/**"
       - ".github/workflows/gha-packer.yml"
