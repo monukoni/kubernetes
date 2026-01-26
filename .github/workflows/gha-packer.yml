@@ -48,10 +48,13 @@ jobs:
       - name: Install jq
         run: sudo apt-get install -y jq
 
-      - name: Get vpc_id
+      - name: Get vpc_id and subnet_id
         run: |
-            export VPC_ID=$(terraform output -json |  jq -r '.vpc_id.value')
+            export VPC_ID=$(terraform output -json | jq -r '.vpc_id.value')
             echo "VPC_ID=$VPC_ID" >> $GITHUB_ENV
+            export SUBNET_ID=$(terraform output -json | jq -r '.eks_public_subnets.value[0].id')
+            echo "SUBNET_ID=$SUBNET_ID" >> $GITHUB_ENV
+
         working-directory: ./terraform/layers/bootstrap
 
       - name: Run `packer init`
@@ -61,4 +64,4 @@ jobs:
         run: "packer validate ."
 
       - name: Run `packer build`
-        run: "packer build -var='vpc_id=${{ env.VPC_ID }}' ."
+        run: "packer build -var='vpc_id=${{ env.VPC_ID }}' -var='subnet_id=${{ env.SUBNET_ID }}' ."

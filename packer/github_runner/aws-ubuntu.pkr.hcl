@@ -4,6 +4,7 @@ source "amazon-ebs" "ubuntu" {
   region        = var.region
 
   vpc_id    = var.vpc_id
+  subnet_id = var.subnet_id
 
   source_ami_filter {
     filters = {
