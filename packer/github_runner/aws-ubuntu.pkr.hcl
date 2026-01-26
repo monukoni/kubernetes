@@ -1,5 +1,5 @@
 source "amazon-ebs" "ubuntu" {
-  ami_name      = var.ami_name
+  ami_name      = "${var.ami_name}-${var.version}"
   instance_type = "t3.micro"
   region        = var.region
   source_ami_filter {

@@ -10,5 +10,5 @@ variable "version" {
 
 variable "ami_name" {
   type    = string
-  default = "github-runner-ubuntu-${var.version}"
+  default = "github-runner-ubuntu"
 }
