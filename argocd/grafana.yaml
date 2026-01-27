@@ -1,20 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: consul
+  name: grafana
   namespace: argocd
 spec:
   destination:
-    namespace: 'consul'
+    namespace: 'monitoring'
     server: https://kubernetes.default.svc
   project: default
   sources:
-    - repoURL: 'https://helm.releases.hashicorp.com'
-      chart: consul
-      targetRevision: 1.9.2
+    - repoURL: 'https://grafana.github.io/helm-charts'
+      chart: grafana
+      targetRevision: 10.5.13
       helm:
         valueFiles:
-          - $values/helm-values/consul-values.yml
+          - $values/helm-values/grafana-values.yml
     - repoURL: 'https://github.com/monukoni/kubernetes'
       targetRevision: HEAD
       ref: values

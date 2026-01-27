@@ -1,20 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: consul
+  name: prometheus
   namespace: argocd
 spec:
   destination:
-    namespace: 'consul'
+    namespace: 'monitoring'
     server: https://kubernetes.default.svc
   project: default
   sources:
-    - repoURL: 'https://helm.releases.hashicorp.com'
-      chart: consul
-      targetRevision: 1.9.2
+    - repoURL: 'https://prometheus-community.github.io/helm-charts'
+      chart: prometheus
+      targetRevision: 28.6.0
       helm:
         valueFiles:
-          - $values/helm-values/consul-values.yml
+          - $values/helm-values/prometheus-values.yml
     - repoURL: 'https://github.com/monukoni/kubernetes'
       targetRevision: HEAD
       ref: values
