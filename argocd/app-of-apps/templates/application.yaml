@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/monukoni/kubernetes.git
-    targetRevision: HEAD
+    targetRevision: add-argocd
     path: argocd/apps   
   destination:
     server: https://kubernetes.default.svc

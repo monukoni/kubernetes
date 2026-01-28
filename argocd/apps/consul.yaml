@@ -18,7 +18,7 @@ spec:
         valueFiles:
           - $values/helm-values/consul-values.yml
     - repoURL: 'https://github.com/monukoni/kubernetes'
-      targetRevision: HEAD
+      targetRevision: add-argocd
       ref: values
   syncPolicy:
     syncOptions:
