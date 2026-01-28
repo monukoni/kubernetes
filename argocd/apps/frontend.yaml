@@ -1,21 +1,24 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: backend
+  name: frontend
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   destination:
     namespace: 'app'
     server: https://kubernetes.default.svc
   source:
-    path: helm/backend
+    path: helm/frontend
     repoURL: https://github.com/monukoni/kubernetes
-    targetRevision: add-argocd
+    targetRevision: HEAD
     helm:
       valueFiles:
-        - backend-values.yml
+        - values.yaml
   sources: []
   project: default
   syncPolicy:
+    automated: null
     syncOptions:
       - CreateNamespace=true
