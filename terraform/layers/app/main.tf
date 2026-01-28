@@ -13,7 +13,7 @@ resource "helm_release" "argocd" {
 }
 
 resource "kubernetes_manifest" "app_of_apps" {
-  manifest = file("../../../argocd/app-of-apps.yaml")
+  manifest   = file("../../../argocd/app-of-apps.yaml")
   depends_on = [helm_release.argocd]
 }
 
