@@ -12,8 +12,12 @@ resource "helm_release" "argocd" {
   cleanup_on_fail = true
 }
 
-resource "kubernetes_manifest" "app_of_apps" {
-  manifest   = yamldecode(file("../../../argocd/app-of-apps.yaml"))
+resource "helm_release" "app_of_apps" {
+  chart = "../../../argocd/app-of-apps"
+  name  = "app-of-apps"
+
+  wait            = true
+  cleanup_on_fail = true
   depends_on = [helm_release.argocd]
 }
 
