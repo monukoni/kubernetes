@@ -1,7 +1,7 @@
-# variable "name" {
-#   type    = string
-#   default = "default"
-# }
+variable "name" {
+  type    = string
+  default = "default"
+}
 
 # # move to vault
 # variable "cloudflare_api_token" {
