@@ -5,6 +5,14 @@ module "gh_oidc" {
   gh_oidc_sub               = var.gh_oidc_sub
 }
 
+module "networking" {
+  source   = "../../modules/network"
+  name     = var.name
+  tags     = var.tags
+  vpc_cidr = var.vpc_cidr
+}
+
+
 resource "aws_ecr_repository" "frontend" {
   name                 = "frontend"
   image_tag_mutability = "MUTABLE"

@@ -2,6 +2,10 @@ name: terraform plan
 
 on: 
   workflow_call:
+        outputs:
+          plan_exitcode:
+            description: "The exit code of the terraform plan command"
+            value: ${{ jobs.plan.outputs.plan_exitcode }}
         secrets:
             CLOUDFLARE_API_TOKEN:
               required: true
@@ -35,6 +39,8 @@ jobs:
             TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
             TF_VAR_zone_id: ${{ secrets.ZONE_ID }}
             TF_IN_AUTOMATION: true
+    outputs:
+      plan_exitcode: ${{ steps.tf_plan.outputs.plan_exitcode }}
     steps:
       - uses: actions/checkout@v5
       - name: configure aws credentials
@@ -44,6 +50,8 @@ jobs:
           role-session-name: GHA_TF_PLAN
           aws-region: eu-central-1
       - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
       - name: Terraform Init
         run: terraform init -input=false
 
@@ -55,8 +63,15 @@ jobs:
           terraform workspace select ${{ inputs.WORKSPACE_NAME }}
 
       - name: Terraform plan
+        id: tf_plan
         run: |
-          terraform plan -var="name=${{ inputs.WORKSPACE_NAME }}" -lock=true -lock-timeout=5m -input=false -out=tfplan
+          set +e
+          terraform plan -detailed-exitcode -var="name=${{ inputs.WORKSPACE_NAME }}" -lock=true -lock-timeout=5m -input=false -out=tfplan
+          exitcode=$?
+          echo "plan_exitcode=$exitcode" >> $GITHUB_OUTPUT
+          if [ $exitcode -eq 1 ]; then
+            exit 1
+          fi
           terraform show -no-color tfplan > tfplan.txt
 
       - name: Archive production artifacts

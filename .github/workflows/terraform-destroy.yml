@@ -9,7 +9,7 @@ on:
             type: string
             default: 'default'
           LAYER:
-            description: 'Layer name which have to be deployed (e.g. bootstrap, ops, app)'
+            description: 'Layer name which have to be destroyed (e.g. bootstrap, ops, app)'
             type: string
             default: bootstrap
     workflow_dispatch:
@@ -20,7 +20,7 @@ on:
           type: string
           default: 'default'
         LAYER:
-          description: 'Layer name which have to be deployed'
+          description: 'Layer name which have to be destroyed'
           required: true
           default: 'bootstrap'
           type: choice

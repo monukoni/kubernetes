@@ -1,0 +1,67 @@
+name: packer
+run-name: Build AMI for GitHub Runner by @${{ github.actor }}
+
+on:
+  push:
+    branches:
+      - main
+      - add-argocd
+    paths:
+      - "packer/github_runner/**"
+      - ".github/workflows/gha-packer.yml"
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+
+env:
+  PRODUCT_VERSION: "1.14.3"
+
+jobs:
+  packer:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packer/github_runner
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          role-to-assume: arn:aws:iam::296291473256:role/github_actions_oidc
+          role-session-name: GHA_PACKER_BUILD
+          aws-region: eu-central-1
+
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@v3.1.0
+        with:
+          version: ${{ env.PRODUCT_VERSION }}
+      
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init -input=false
+        working-directory: ./terraform/layers/bootstrap
+      
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Get vpc_id and subnet_id
+        run: |
+            export VPC_ID=$(terraform output -json | jq -r '.vpc_id.value')
+            echo "VPC_ID=$VPC_ID" >> $GITHUB_ENV
+            export SUBNET_ID=$(terraform output -json | jq -r '.eks_public_subnets.value[0].id')
+            echo "SUBNET_ID=$SUBNET_ID" >> $GITHUB_ENV
+
+        working-directory: ./terraform/layers/bootstrap
+
+      - name: Run `packer init`
+        run: "packer init ."
+
+      - name: Run `packer validate`
+        run: "packer validate ."
+
+      - name: Run `packer build`
+        run: "packer build -var='vpc_id=${{ env.VPC_ID }}' -var='subnet_id=${{ env.SUBNET_ID }}' ."
