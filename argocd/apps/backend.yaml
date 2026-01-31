@@ -19,5 +19,7 @@ spec:
   sources: []
   project: default
   syncPolicy:
+    automated:
+      enabled: true
     syncOptions:
       - CreateNamespace=true
