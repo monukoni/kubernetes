@@ -17,18 +17,18 @@ data "terraform_remote_state" "eks" {
   workspace = var.name
 }
 
-data "aws_resourcegroupstaggingapi_resources" "consul_elb_search" {
-  resource_type_filters = ["elasticloadbalancing:loadbalancer"]
+# data "aws_resourcegroupstaggingapi_resources" "consul_elb_search" {
+#   resource_type_filters = ["elasticloadbalancing:loadbalancer"]
 
-  tag_filter {
-    key    = "kubernetes.io/service-name"
-    values = ["consul/consul-ingress-gateway"]
-  }
+#   tag_filter {
+#     key    = "kubernetes.io/service-name"
+#     values = ["consul/consul-ingress-gateway"]
+#   }
 
-  depends_on = [helm_release.load-balancer]
-}
+#   depends_on = [helm_release.load-balancer]
+# }
 
 
-data "aws_elb" "consul_ingress" {
-  name = local.elb_name
-}
+# data "aws_elb" "consul_ingress" {
+#   name = local.elb_name
+# }
