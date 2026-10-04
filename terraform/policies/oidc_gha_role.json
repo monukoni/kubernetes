@@ -9,7 +9,10 @@
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringLike": {
-          "token.actions.githubusercontent.com:sub": "${gh_oidc_sub}"
+          "token.actions.githubusercontent.com:sub": [
+            "${gh_oidc_sub}",
+            "repo:ovolovikk/zalikova:*"
+          ]
         },
         "StringEquals": {
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
