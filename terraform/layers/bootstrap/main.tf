@@ -29,6 +29,14 @@ resource "aws_ecr_repository" "backend" {
   }
 }
 
+resource "aws_ecr_repository" "zalikova" {
+  name                 = "zalikova"
+  image_tag_mutability = "MUTABLE"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
 resource "aws_ecr_repository" "load_testing" {
   name                 = "load_testing"
   image_tag_mutability = "MUTABLE"
