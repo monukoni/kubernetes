@@ -11,7 +11,7 @@
         "StringLike": {
           "token.actions.githubusercontent.com:sub": [
             "${gh_oidc_sub}",
-            "repo:ovolovikk/zalikova:*"
+            "repo:ovolovikk@182615977/zalikova@1372968915:*"
           ]
         },
         "StringEquals": {
