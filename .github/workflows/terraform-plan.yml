@@ -2,11 +2,10 @@ name: terraform plan
 
 on: 
   workflow_call:
-        secrets:
-            CLOUDFLARE_API_TOKEN:
-              required: true
-            ZONE_ID:
-              required: true
+        outputs:
+          plan_exitcode:
+            description: "The exit code of the terraform plan command"
+            value: ${{ jobs.plan.outputs.plan_exitcode }}
         inputs:
           WORKSPACE_NAME:
             description: 'Workspace name'
@@ -17,6 +16,9 @@ on:
             description: 'Layer name which have to be deployed (e.g. bootstrap, ops, app)'
             type: string
             default: bootstrap
+          AWS_ACCOUNT_ID:
+            required: true
+            type: string
   workflow_dispatch:
 
 permissions:
@@ -32,18 +34,20 @@ jobs:
       group: terraform-state
       cancel-in-progress: false
     env:
-            TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-            TF_VAR_zone_id: ${{ secrets.ZONE_ID }}
             TF_IN_AUTOMATION: true
+    outputs:
+      plan_exitcode: ${{ steps.tf_plan.outputs.plan_exitcode }}
     steps:
       - uses: actions/checkout@v5
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v5.1.1
         with:
-          role-to-assume: arn:aws:iam::296291473256:role/github_actions_oidc
+          role-to-assume: arn:aws:iam::${{ inputs.AWS_ACCOUNT_ID }}:role/github_actions_oidc
           role-session-name: GHA_TF_PLAN
           aws-region: eu-central-1
       - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
       - name: Terraform Init
         run: terraform init -input=false
 
@@ -52,11 +56,18 @@ jobs:
 
       - name: Terraform workspace
         run: |
-          terraform workspace select ${{ inputs.WORKSPACE_NAME }}
+          terraform workspace select -or-create=true ${{ inputs.WORKSPACE_NAME }} 
 
       - name: Terraform plan
+        id: tf_plan
         run: |
-          terraform plan -var="name=${{ inputs.WORKSPACE_NAME }}" -lock=true -lock-timeout=5m -input=false -out=tfplan
+          set +e
+          terraform plan -detailed-exitcode -var="name=${{ inputs.WORKSPACE_NAME }}" -lock=true -lock-timeout=5m -input=false -out=tfplan
+          exitcode=$?
+          echo "plan_exitcode=$exitcode" >> $GITHUB_OUTPUT
+          if [ $exitcode -eq 1 ]; then
+            exit 1
+          fi
           terraform show -no-color tfplan > tfplan.txt
 
       - name: Archive production artifacts

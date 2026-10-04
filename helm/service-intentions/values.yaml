@@ -1,8 +1,0 @@
-name: grafana-prometheus
-namespace:  consul
-destination:
-  name: prometheus-server
-
-sources:
-  name: grafana
-  action: allow

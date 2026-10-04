@@ -19,7 +19,17 @@ variable "oidc_role_path" {
 
 }
 
+# variable "external_secrets_access_policy_path" {
+#   type = string
+# }
 
+# variable "external_secrets_pod_identity_role_path" {
+#   type = string
+# }
+
+# variable "cloudflare_api_key_secret_arn" {
+#   type = string
+# }
 
 variable "name" {
   type    = string

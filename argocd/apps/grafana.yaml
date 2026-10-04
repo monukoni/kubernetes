@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  destination:
+    namespace: 'monitoring'
+    server: https://kubernetes.default.svc
+  project: default
+  sources:
+    - repoURL: 'https://grafana.github.io/helm-charts'
+      chart: grafana
+      targetRevision: 10.5.13
+      helm:
+        valueFiles:
+          - $values/helm-values/grafana-values.yml
+    - repoURL: 'https://github.com/monukoni/kubernetes'
+      targetRevision: add-argocd
+      ref: values
+  syncPolicy:
+    automated:
+      enabled: true
+    syncOptions:
+      - CreateNamespace=true

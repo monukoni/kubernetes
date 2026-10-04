@@ -5,9 +5,6 @@ replicaCount: 3
 serviceAccount:
   name: "backend"
 
-podAnnotations: {
-  "consul.hashicorp.com/connect-inject": "true",
-}
 
 podLabels: {
   tier: backend
@@ -27,7 +24,7 @@ container:
   name: backend
   port: 80
   image:
-    repository: 296291473256.dkr.ecr.eu-central-1.amazonaws.com/backend
+    repository: 465760687279.dkr.ecr.eu-central-1.amazonaws.com/backend
     tag: latest
   healthEndpoint: /healthz
   healthPort: 80

@@ -15,7 +15,7 @@ resource "aws_eks_cluster" "eks" {
     service_ipv4_cidr = "172.20.0.0/16"
   }
 
-  version = "1.33"
+  version = "1.36"
   vpc_config {
     subnet_ids              = var.subnets
     endpoint_private_access = true
@@ -68,3 +68,27 @@ resource "aws_iam_role" "oidc" {
   "oidc_url" : aws_iam_openid_connect_provider.eks.url })
   tags = var.tags
 }
+
+# resource "aws_iam_policy" "external_secrets_access_policy" {
+#   name   = "external_secrets_access_policy"
+#   policy = file(var.external_secrets_access_policy_path)
+# }
+
+# resource "aws_iam_role" "external_secrets_pod_identity_role" {
+#   name = "external_secrets_pod_identity_role"
+#   assume_role_policy = templatefile(var.external_secrets_pod_identity_role_path, {
+#   "secret_arn" : var.cloudflare_api_key_secret_arn })
+#   tags = var.tags
+# }
+
+# resource "aws_iam_role_policy_attachment" "external_secrets_pod_identity_role_attach" {
+#   role       = aws_iam_role.external_secrets_pod_identity_role.name
+#   policy_arn = aws_iam_policy.external_secrets_access_policy.arn
+# }
+
+# resource "aws_eks_pod_identity_association" "external_secrets_pod_identity_association" {
+#   cluster_name    = aws_eks_cluster.eks.name
+#   namespace       = "external-secrets"
+#   service_account = "external-secrets"
+#   role_arn        = aws_iam_role.external_secrets_pod_identity_role.arn
+# }

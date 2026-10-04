@@ -2,18 +2,15 @@ name: deploy stack
 
 on:
   workflow_call:
-    secrets:
-      CLOUDFLARE_API_TOKEN:
-        required: true
-      ZONE_ID:
-        required: true
     inputs:
       WORKSPACE_NAME:
         description: 'Workspace name'
         required: true
         type: string
         default: 'default'
-
+      AWS_ACCOUNT_ID:
+        required: true
+        type: string
 permissions:
   id-token: write
 
@@ -24,6 +21,7 @@ jobs:
     with:
       WORKSPACE_NAME: "default"
       LAYER: bootstrap
+      AWS_ACCOUNT_ID: ${{ inputs.AWS_ACCOUNT_ID }}
 
   ops:
     needs: [bootstrap]
@@ -32,6 +30,7 @@ jobs:
     with:
       WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
       LAYER: ops
+      AWS_ACCOUNT_ID: ${{ inputs.AWS_ACCOUNT_ID }}
 
   app:
     needs: [ops]
@@ -40,3 +39,4 @@ jobs:
     with:
       WORKSPACE_NAME: ${{ inputs.WORKSPACE_NAME }}
       LAYER: app
+      AWS_ACCOUNT_ID: ${{ inputs.AWS_ACCOUNT_ID }}

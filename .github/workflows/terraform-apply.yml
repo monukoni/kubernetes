@@ -2,11 +2,6 @@ name: terraform apply
 
 on:
   workflow_call:
-    secrets:
-      CLOUDFLARE_API_TOKEN:
-        required: true
-      ZONE_ID:
-        required: true
     inputs:
       WORKSPACE_NAME:
         description: 'Workspace name'
@@ -17,6 +12,9 @@ on:
         description: 'Layer name which have to be deployed (e.g. bootstrap, ops, app)'
         type: string
         default: bootstrap
+      AWS_ACCOUNT_ID:
+        required: true
+        type: string
 
 permissions:
   id-token: write
@@ -32,15 +30,13 @@ jobs:
       group: terraform-state
       cancel-in-progress: false
     env:
-      TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      TF_VAR_zone_id: ${{ secrets.ZONE_ID }}
       TF_IN_AUTOMATION: true
     steps:
       - uses: actions/checkout@v5
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v5.1.1
         with:
-          role-to-assume: arn:aws:iam::296291473256:role/github_actions_oidc
+          role-to-assume: arn:aws:iam::${{ inputs.AWS_ACCOUNT_ID }}:role/github_actions_oidc
           role-session-name: GHA_TF_APPLY
           aws-region: eu-central-1
       - uses: hashicorp/setup-terraform@v3
@@ -57,6 +53,6 @@ jobs:
 
       - name: Terraform workspace
         run: |
-          terraform workspace select ${{ inputs.WORKSPACE_NAME }}
+          terraform workspace select -or-create=true ${{ inputs.WORKSPACE_NAME }} 
       - name: Terraform Apply
         run: terraform apply -lock=true -lock-timeout=5m -input=false tfplan

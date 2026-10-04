@@ -10,7 +10,3 @@ datasources:
         jsonData:
           timeInterval: 1m
 
-
-podAnnotations:
-  "consul.hashicorp.com/connect-inject": "true"
-  'consul.hashicorp.com/transparent-proxy': 'true'
